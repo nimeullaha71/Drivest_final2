@@ -1,0 +1,104 @@
+import 'package:drivest_office/home/pages/profile/about_us_page.dart';
+import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
+import 'package:flutter/material.dart';
+import '../../../home/pages/ai_chat_page.dart';
+import '../../../home/pages/compare_selection_page.dart';
+import '../../../home/pages/saved_page.dart';
+import '../../../main_bottom_nav_screen.dart';
+import 'change_password_screen.dart';
+
+class SettingScreen extends StatefulWidget {
+  const SettingScreen({super.key});
+
+  @override
+  State<SettingScreen> createState() => _SettingScreenState();
+}
+
+class _SettingScreenState extends State<SettingScreen> {
+  int _selectedIndex = 4;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: DrivestAppBar(title: "Settings"),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ListTile(
+                  tileColor: Colors.white,
+                  leading: const Icon(Icons.key, color: Color(0xff015093)),
+                  title: const Text(
+                    "Change Password",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff333333),
+                    ),
+                  ),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 24,
+                    color: Color(0xff015093),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChangePasswordScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 12),
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ListTile(
+                  tileColor: Colors.white,
+                  leading: const Icon(
+                    Icons.delete_outline,
+                    color: Color(0xff015093),
+                  ),
+                  title: const Text(
+                    "Delete Account",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff333333),
+                    ),
+                  ),
+                  onTap: () {
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          if (index == 0) Navigator.push(context, MaterialPageRoute(builder: (context) => MainBottomNavScreen()));
+          if (index == 1) Navigator.push(context, MaterialPageRoute(builder: (context) => CompareSelectionPage()));
+          if (index == 2) Navigator.push(context, MaterialPageRoute(builder: (context) => SavedPage()));
+          if (index == 3) Navigator.push(context, MaterialPageRoute(builder: (context) => AiChatPage()));
+        },
+      ),
+    );
+  }
+}

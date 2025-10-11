@@ -1,0 +1,173 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../home/pages/profile/about_us_page.dart';
+import '../../../home/widgets/profile_page_app_bar.dart';
+import '../../../main_bottom_nav_screen.dart';
+import '../../../home/pages/ai_chat_page.dart';
+import '../../../home/pages/compare_selection_page.dart';
+import '../../../home/pages/saved_page.dart';
+import 'setting_screen.dart';
+
+class ChangePasswordScreen extends StatefulWidget {
+  const ChangePasswordScreen({super.key});
+
+  @override
+  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+}
+
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+  bool _obscureNewPassword = true;
+  bool _obscureRetypePassword = true;
+  int _selectedIndex = 4;
+
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _retypePasswordController = TextEditingController();
+
+  void _toggleNewPasswordVisibility() {
+    setState(() {
+      _obscureNewPassword = !_obscureNewPassword;
+    });
+  }
+
+  void _toggleRetypePasswordVisibility() {
+    setState(() {
+      _obscureRetypePassword = !_obscureRetypePassword;
+    });
+  }
+
+  Future<void> _changePassword() async {
+    final newPassword = _newPasswordController.text.trim();
+    final retypePassword = _retypePasswordController.text.trim();
+
+    if (newPassword.isEmpty || retypePassword.isEmpty) {
+      _showSnackBar("Please fill all fields", Colors.orange);
+      return;
+    }
+
+    if (newPassword != retypePassword) {
+      _showSnackBar("Passwords do not match", Colors.red);
+      return;
+    }
+
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("user_password", newPassword);
+
+      _showSnackBar("Password changed successfully!", Colors.green);
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SettingScreen()),
+        );
+      }
+    } catch (e) {
+      _showSnackBar("Something went wrong", Colors.red);
+    }
+  }
+
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: color),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: const DrivestAppBar(title: "Change Password"),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Set your new password",
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                color: Color(0xff333333),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _newPasswordController,
+              obscureText: _obscureNewPassword,
+              decoration: InputDecoration(
+                hintText: "New Password",
+                hintStyle: const TextStyle(color: Color(0xffA1A1A1)),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+                    color: const Color(0xff015093),
+                  ),
+                  onPressed: _toggleNewPasswordVisibility,
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            TextField(
+              controller: _retypePasswordController,
+              obscureText: _obscureRetypePassword,
+              decoration: InputDecoration(
+                hintText: "Retype Password",
+                hintStyle: const TextStyle(color: Color(0xffA1A1A1)),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureRetypePassword ? Icons.visibility_off : Icons.visibility,
+                    color: const Color(0xff015093),
+                  ),
+                  onPressed: _toggleRetypePasswordVisibility,
+                ),
+              ),
+            ),
+            const SizedBox(height: 25),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF015093),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(57),
+                  ),
+                ),
+                onPressed: _changePassword,
+                child: const Text(
+                  "Change Password",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xffFEFEFE),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          if (index == 0) Navigator.push(context, MaterialPageRoute(builder: (context) => MainBottomNavScreen()));
+          if (index == 1) Navigator.push(context, MaterialPageRoute(builder: (context) => CompareSelectionPage()));
+          if (index == 2) Navigator.push(context, MaterialPageRoute(builder: (context) => SavedPage()));
+          if (index == 3) Navigator.push(context, MaterialPageRoute(builder: (context) => AiChatPage()));
+        },
+      ),
+    );
+  }
+}
