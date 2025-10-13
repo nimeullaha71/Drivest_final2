@@ -1,4 +1,4 @@
-
+import 'package:drivest_office/home/pages/top_brands_page.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/brand_item.dart';
 
@@ -21,9 +21,7 @@ class TopBrandsSection extends StatelessWidget {
             ),
             Spacer(),
             TextButton(
-              onPressed: () {
-                print("View all top brands clicked");
-              },
+              onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>TopBrandsPage())),
               child: Text(
                 "view all",
                 style: TextStyle(
