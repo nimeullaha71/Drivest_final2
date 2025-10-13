@@ -1,10 +1,13 @@
+import 'package:drivest_office/core/services/network/auth_api.dart';
 import 'package:drivest_office/features/auth/screen/reset_successful_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../app/asset_paths.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key});
+  final String email;
+
+  const ResetPasswordScreen({super.key, required this.email});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -17,12 +20,54 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   bool _obscureNew = true;
   bool _obscureRetype = true;
+  bool _isResetting = false;
 
-  void _onReset() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const ResetSuccessfulScreen()),
-    );
+  void _onReset() async {
+    final newPassword = _newPasswordController.text.trim();
+    final retypePassword = _retypeNewPasswordController.text.trim();
+
+    if (newPassword.isEmpty || retypePassword.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill all fields")),
+      );
+      return;
+    }
+
+    if (newPassword != retypePassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Passwords do not match")),
+      );
+      return;
+    }
+
+    setState(() => _isResetting = true);
+
+    try {
+      final response = await ApiService.resetPassword(
+        email: widget.email,
+        newPassword: _newPasswordController.text.trim(),
+      );
+
+      setState(() => _isResetting = false);
+
+      if (response['message'] == "Password reset successful") {
+        // Password reset successful
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (_) => const ResetSuccessfulScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'] ?? 'Failed to reset password')),
+        );
+      }
+    } catch (e) {
+      setState(() => _isResetting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
   }
 
   @override
@@ -60,7 +105,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ],
                 ),
               ),
-
               Positioned(
                 top: size.height * 0.44,
                 left: 16,
@@ -70,11 +114,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
                         blurRadius: 10,
-                        offset: const Offset(0, -3),
+                        offset: Offset(0, -3),
                       ),
                     ],
                   ),
@@ -100,7 +144,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-
                       TextFormField(
                         controller: _newPasswordController,
                         obscureText: _obscureNew,
@@ -118,12 +161,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                          contentPadding:
+                          const EdgeInsets.symmetric(vertical: 15),
                         ),
                       ),
-
                       const SizedBox(height: 15),
-
                       TextFormField(
                         controller: _retypeNewPasswordController,
                         obscureText: _obscureRetype,
@@ -143,12 +185,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                          contentPadding:
+                          const EdgeInsets.symmetric(vertical: 15),
                         ),
                       ),
-
                       const SizedBox(height: 20),
-
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -160,8 +201,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             elevation: 3,
                           ),
-                          onPressed: _onReset,
-                          child: const Text(
+                          onPressed: _isResetting ? null : _onReset,
+                          child: _isResetting
+                              ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                              : const Text(
                             "Reset Password",
                             style: TextStyle(
                               fontSize: 18,

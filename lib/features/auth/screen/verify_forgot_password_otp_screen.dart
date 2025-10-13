@@ -1,3 +1,4 @@
+import 'package:drivest_office/core/services/network/auth_api.dart';
 import 'package:drivest_office/features/auth/screen/reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,20 +17,66 @@ class VerifyForgotPasswordOtpScreen extends StatefulWidget {
 
 class _VerifyForgotPasswordOtpScreenState
     extends State<VerifyForgotPasswordOtpScreen> {
-  final TextEditingController _teController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isVerifying = false;
 
-  void _onVerify() {
+  void _onVerify() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
-      );
+      setState(() => _isVerifying = true);
+
+      try {
+        final response = await ApiService.verifyForgotPasswordOtp(
+          widget.email,
+          _otpController.text.trim(),
+        );
+
+        setState(() => _isVerifying = false);
+        debugPrint("OTP verification response: $response");
+
+        if (response['success'] == true ||
+            (response['message'] != null &&
+                response['message'].toString().toLowerCase().contains('success'))) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ResetPasswordScreen(email: widget.email),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response['message'] ?? 'Invalid OTP'),
+            ),
+          );
+        }
+      } catch (e) {
+        setState(() => _isVerifying = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
     }
   }
 
-  void _onResend() {
-    debugPrint("Resend OTP tapped");
+
+
+  void _onResend() async {
+    setState(() => _isVerifying = true);
+
+    try {
+      final response = await ApiService.forgotPassword(widget.email);
+      setState(() => _isVerifying = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response['message'] ?? 'OTP resent!')),
+      );
+    } catch (e) {
+      setState(() => _isVerifying = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
   }
 
   @override
@@ -111,7 +158,7 @@ class _VerifyForgotPasswordOtpScreenState
                         const SizedBox(height: 20),
 
                         PinCodeTextField(
-                          controller: _teController,
+                          controller: _otpController,
                           length: 6,
                           obscureText: false,
                           animationType: AnimationType.fade,
@@ -165,8 +212,12 @@ class _VerifyForgotPasswordOtpScreenState
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               elevation: 3,
                             ),
-                            onPressed: _onVerify,
-                            child: const Text(
+                            onPressed: _isVerifying ? null : _onVerify,
+                            child: _isVerifying
+                                ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                                : const Text(
                               "Verify Code",
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,

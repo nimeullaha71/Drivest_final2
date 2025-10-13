@@ -1,3 +1,4 @@
+import 'package:drivest_office/core/services/network/auth_api.dart';
 import 'package:drivest_office/features/auth/screen/verify_forgot_password_otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,6 +27,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           height: size.height,
           child: Stack(
             children: [
+              // 🔹 Top Blue Background with Logo
               Container(
                 color: const Color(0xFF004E92),
                 width: double.infinity,
@@ -52,6 +54,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
 
+              // 🔹 White Card Section (Form)
               Positioned(
                 top: size.height * 0.40,
                 left: 16,
@@ -93,6 +96,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                         const SizedBox(height: 20),
 
+                        // 🔹 Email Input
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -102,15 +106,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
-                            contentPadding:
-                            const EdgeInsets.symmetric(vertical: 14),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Enter your email';
                             }
-                            if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w]{2,4}$')
-                                .hasMatch(value)) {
+                            if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w]{2,4}$').hasMatch(value)) {
                               return 'Enter a valid email';
                             }
                             return null;
@@ -119,6 +121,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                         const SizedBox(height: 20),
 
+                        // 🔹 Send Code Button
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -127,21 +130,71 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                              padding:
-                              const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               elevation: 5,
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                final email = _emailController.text.trim();
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        VerifyForgotPasswordOtpScreen(
-                                          email:"",
-                                        ),
-                                  ),
+                                // 🔹 Show loading dialog
+                                showDialog(
+                                  context: context,
+                                  useRootNavigator: true,
+                                  barrierDismissible: false,
+                                  builder: (_) => const Center(child: CircularProgressIndicator()),
                                 );
+
+                                try {
+                                  final response = await ApiService.forgotPassword(email);
+
+                                  if (mounted) {
+                                    Navigator.of(context, rootNavigator: true).pop();
+                                  }
+
+                                  print("Forgot password response: $response");
+
+                                  // ✅ FIXED CONDITION BELOW
+                                  final isOtpSent = response['message']
+                                      ?.toString()
+                                      .toLowerCase()
+                                      .contains('otp') ??
+                                      false;
+
+                                  if (isOtpSent) {
+                                    // 🔹 Show success message
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(response['message'] ?? 'OTP sent!')),
+                                      );
+
+                                      // 🔹 Navigate to VerifyForgotPasswordOtpScreen
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              VerifyForgotPasswordOtpScreen(email: email),
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    // 🔹 Show failure message
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(response['message'] ?? 'Failed to send OTP')),
+                                      );
+                                    }
+                                  }
+                                } catch (e, s) {
+                                  if (mounted) {
+                                    Navigator.of(context, rootNavigator: true).pop();
+                                    print('Error in forgot password: $e\n$s');
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("Error: ${e.toString()}")),
+                                    );
+                                  }
+                                }
+                              }
                             },
                             child: const Text(
                               "Send Code",
