@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../main_bottom_nav_screen.dart';
 import '../../widgets/custome_bottom_nav_bar.dart';
 import '../ai_chat_page.dart';
 import '../compare_selection_page.dart';
 import '../saved_page.dart';
+import 'package:http/http.dart' as http;
 
 class HelpAndFeedbackPage extends StatefulWidget {
   const HelpAndFeedbackPage({super.key});
@@ -15,7 +18,73 @@ class HelpAndFeedbackPage extends StatefulWidget {
 
 class _HelpAndFeedbackPageState extends State<HelpAndFeedbackPage> {
   int _selectedIndex = 4;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _issueController = TextEditingController();
+
+  bool _isSubmitting = false;
+
   static const primary = Color(0xff015093);
+
+  // API call
+  Future<void> _onSubmit() async {
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
+    final message = _issueController.text.trim();
+
+    if (email.isEmpty || phone.isEmpty || message.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields')),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+    _emailController.clear();
+    _phoneController.clear();
+    _issueController.clear();
+
+    try {
+
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+      print("TOKEN: $token");
+
+      final url = Uri.parse('https://ai-car-app-sandy.vercel.app/user/create-ticket');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'email': email,
+          'phone': phone,
+          'message': message,
+        }),
+      );
+
+
+      setState(() => _isSubmitting = false);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'] ?? 'Ticket submitted successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to submit ticket: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -39,51 +108,52 @@ class _HelpAndFeedbackPageState extends State<HelpAndFeedbackPage> {
             ),
             const SizedBox(height: 20),
             TextField(
+              controller: _emailController,
               decoration: InputDecoration(
                 hintText: 'Email',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 16, horizontal: 12),
+                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               ),
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: _phoneController,
               decoration: InputDecoration(
                 hintText: 'Phone Number',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 16, horizontal: 12),
+                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               ),
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: _issueController,
               maxLines: 6,
               decoration: InputDecoration(
                 hintText: 'Describe Your Issue',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 16, horizontal: 12),
+                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               ),
             ),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                },
+                onPressed: _isSubmitting ? null : _onSubmit,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28),
                   ),
                 ),
-                child: const Text(
+                child: _isSubmitting
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
                   'Submit',
                   style: TextStyle(
                     fontSize: 16,
@@ -113,7 +183,7 @@ class _HelpAndFeedbackPageState extends State<HelpAndFeedbackPage> {
                     width: 40,
                     height: 40,
                     margin: const EdgeInsets.only(right: 12),
-                    child: Icon(Icons.wifi_calling_3_sharp),
+                    child: const Icon(Icons.wifi_calling_3_sharp),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +209,6 @@ class _HelpAndFeedbackPageState extends State<HelpAndFeedbackPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
           ],
         ),
       ),
