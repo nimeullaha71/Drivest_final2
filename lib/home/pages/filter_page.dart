@@ -28,11 +28,14 @@ class _FilterPageState extends State<FilterPage> {
   final List<String> conditions = ['Excellent', 'Good', 'Needs Repair'];
   final List<String> locations = ['Belgium', 'Canada', 'South Korea'];
 
+  // Mandatory fields
   String? selectedBrand = 'Toyota';
   String? selectedFuelType = 'Diesel';
-  String? selectedCarType = 'Sports Car';
-  String? selectedCondition = 'Good';
-  String? selectedLocation = 'Canada';
+
+  // Optional fields
+  String? selectedCarType; // initially unselected
+  String? selectedCondition;
+  String? selectedLocation;
 
   RangeValues priceRange = RangeValues(5, 7000000);
   RangeValues yearRange = RangeValues(2000, 2010);
@@ -69,7 +72,7 @@ class _FilterPageState extends State<FilterPage> {
             _buildSectionTitle("Car Brand"),
             _buildSingleSelectChips(brands, selectedBrand, (val) {
               setState(() => selectedBrand = val);
-            }),
+            }, isMandatory: true),
 
             _buildSectionTitle("Price Range"),
             _buildSlider(
@@ -90,7 +93,7 @@ class _FilterPageState extends State<FilterPage> {
             _buildSectionTitle("Fuel Type"),
             _buildSingleSelectChips(fuelTypes, selectedFuelType, (val) {
               setState(() => selectedFuelType = val);
-            }),
+            }, isMandatory: true),
 
             _buildSectionTitle("Car Type"),
             _buildSingleSelectChips(carTypes, selectedCarType, (val) {
@@ -152,8 +155,9 @@ class _FilterPageState extends State<FilterPage> {
   Widget _buildSingleSelectChips(
       List<String> options,
       String? selectedValue,
-      void Function(String) onSelected,
-      ) {
+      void Function(String?) onSelected, {
+        bool isMandatory = false,
+      }) {
     return Wrap(
       spacing: 10,
       runSpacing: 10,
@@ -166,7 +170,19 @@ class _FilterPageState extends State<FilterPage> {
           ),
           selected: isSelected,
           onSelected: (_) {
-            onSelected(option);
+            setState(() {
+              if (isMandatory) {
+                // mandatory fields always select something
+                onSelected(option);
+              } else {
+                // optional fields → tap again to deselect
+                if (isSelected) {
+                  onSelected(null); // deselect
+                } else {
+                  onSelected(option);
+                }
+              }
+            });
           },
           selectedColor: Color.fromRGBO(1, 80, 147, 1),
           backgroundColor: Colors.white,
@@ -220,32 +236,42 @@ class _FilterPageState extends State<FilterPage> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          print("Selected Brand: $selectedBrand");
-          print("Selected Fuel Type: $selectedFuelType");
-          print("Selected Car Type: $selectedCarType");
-          print("Selected Condition: $selectedCondition");
-          print("Selected Location: $selectedLocation");
+          final selectedFilters = {
+            "brand": selectedBrand,
+            "fuelType": selectedFuelType,
+            "carType": selectedCarType,
+            "condition": selectedCondition,
+            "location": selectedLocation,
+            "minPrice": priceRange.start.round(),
+            "maxPrice": priceRange.end.round(),
+            "yearMin": yearRange.start.round(),
+            "yearMax": yearRange.end.round(),
+            "status": "active",
+          };
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => FilteredCarPage(filters: selectedFilters),
+            ),
+          );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color.fromRGBO(1, 80, 147, 1),
-          padding: EdgeInsets.symmetric(vertical: 6),
+          backgroundColor: const Color.fromRGBO(1, 80, 147, 1),
+          padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
         ),
-        child: TextButton(
-           onPressed: () {
-             Navigator.push(context, MaterialPageRoute(builder: (context)=>FilteredCarPage()));
-           },child: Text('Show car',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-            ),
+        child: const Text(
+          'Show Cars',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
-      ),
     );
-
   }
 }

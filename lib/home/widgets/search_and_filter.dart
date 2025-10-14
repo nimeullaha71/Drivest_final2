@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SearchAndFilter extends StatelessWidget {
+  final TextEditingController controller;
+  final VoidCallback onSearch;
   final VoidCallback onFilterTap;
-  const SearchAndFilter({super.key, required this.onFilterTap});
+
+  const SearchAndFilter({
+    super.key,
+    required this.controller,
+    required this.onSearch,
+    required this.onFilterTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,32 +26,40 @@ class SearchAndFilter extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.grey.shade300),
             ),
-            child: const Row(
+            child: Row(
               children: [
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'search car,brand',
+                    controller: controller,
+                    onSubmitted: (_) => onSearch(),
+                    decoration: const InputDecoration(
+                      hintText: 'Search car, brand...',
                       border: InputBorder.none,
                     ),
                   ),
                 ),
-                Icon(Icons.search, color: Colors.grey),
-                SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.search, color: Colors.grey),
+                  onPressed: onSearch,
+                ),
               ],
             ),
           ),
         ),
         const SizedBox(width: 12),
         Container(
-          width: 48, height: 48,
+          width: 48,
+          height: 48,
           decoration: const BoxDecoration(
             color: Color.fromRGBO(1, 80, 147, 1),
             shape: BoxShape.circle,
           ),
           child: IconButton(
             onPressed: onFilterTap,
-            icon: SvgPicture.asset('assets/images/filter-circle-svgrepo-com.svg', color: Colors.white),
+            icon: SvgPicture.asset(
+              'assets/images/filter-circle-svgrepo-com.svg',
+              color: Colors.white,
+            ),
           ),
         ),
       ],
