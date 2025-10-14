@@ -49,11 +49,20 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
         'page': '1',
         'limit': '10',
         'sort': '-publishedAt',
+        // Search term from controller
+        if (searchController.text.isNotEmpty) 'q': searchController.text,
       };
 
-      debugPrint('Query Params: $queryParams');
+      // Merge additional filters if any
+      if (filters != null) {
+        filters.forEach((key, value) {
+          if (value != null && value.toString().isNotEmpty) {
+            queryParams[key] = value.toString();
+          }
+        });
+      }
 
-      queryParams.removeWhere((key, value) => value == null || value.isEmpty);
+      debugPrint('Query Params: $queryParams');
 
       final uri = Uri.parse('$baseUrl/cars').replace(queryParameters: queryParams);
       debugPrint('API URL: $uri');
@@ -63,7 +72,7 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
 
       if (res.statusCode == 200) {
         final data = json.decode(res.body);
-        debugPrint('API Response: ${data}');
+        debugPrint('API Response: $data');
         if (data['success'] == true) {
           setState(() => carList = data['data'] ?? []);
         }
@@ -121,7 +130,9 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                   const SizedBox(height: 16),
                   SearchAndFilter(
                     controller: searchController,
-                    onSearch: () => fetchCars(),
+                    onSearch: () {
+                      fetchCars(); // fetchCars automatically searchController.text use korbe
+                    },
                     onFilterTap: () async {
                       final filters = await Navigator.push(
                         context,
