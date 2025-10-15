@@ -13,7 +13,7 @@ import 'widgets/recommended_section.dart';
 import 'widgets/ai_suggestion_card.dart';
 import 'pages/filter_page.dart';
 
-const String baseUrl = "https://ai-car-app-sandy.vercel.app/"; // <-- change this
+const String baseUrl = "https://ai-car-app-sandy.vercel.app/";
 
 class CombinedHomePage extends StatefulWidget {
   const CombinedHomePage({super.key});
@@ -36,7 +36,7 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
   @override
   void initState() {
     super.initState();
-    fetchCars(); // Load default cars
+    fetchCars();
   }
 
   Future<void> fetchCars([Map<String, dynamic>? filters]) async {
@@ -49,17 +49,16 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
         'page': '1',
         'limit': '10',
         'sort': '-publishedAt',
-        // Search term from controller
         if (searchController.text.isNotEmpty) 'q': searchController.text,
       };
 
-      // Merge additional filters if any
       if (filters != null) {
         filters.forEach((key, value) {
           if (value != null && value.toString().isNotEmpty) {
             queryParams[key] = value.toString();
           }
-        });
+        }
+        );
       }
 
       debugPrint('Query Params: $queryParams');
@@ -131,7 +130,7 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                   SearchAndFilter(
                     controller: searchController,
                     onSearch: () {
-                      fetchCars(); // fetchCars automatically searchController.text use korbe
+                      fetchCars();
                     },
                     onFilterTap: () async {
                       final filters = await Navigator.push(
