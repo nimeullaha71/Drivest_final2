@@ -83,7 +83,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Profile Info
                 _buildProfileInfoRow('Full Name:', displayName),
                 const SizedBox(height: 16),
                 _buildProfileInfoRow('Email/Phone Number:', displayEmail),
@@ -100,14 +99,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
             right: 16,
             child: InkWell(
               onTap: () async {
-                // Navigate to edit profile page
                 final updated = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) =>  EditProfileScreen()),
                 );
 
                 if (updated == true) {
-                  _loadUserInfo(); // refresh profile after editing
+                  _loadUserInfo();
                 }
               },
               child: Container(

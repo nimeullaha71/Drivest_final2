@@ -5,6 +5,8 @@ import 'package:drivest_office/home/pages/profile/about_us_page.dart';
 import 'package:drivest_office/home/pages/profile/help_&_feedback_page.dart';
 import 'package:drivest_office/home/pages/profile/my_profile_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../core/services/network/user_provider.dart';
 import '../../../main_bottom_nav_screen.dart';
 import 'invoice_screen.dart';
 import 'privacy_policy_screen.dart';
@@ -26,20 +28,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String displayName = "Guest";
-  String displayEmail = "guest@gmail.com";
-
   @override
   void initState() {
     super.initState();
-    _loadUserInfo();
-  }
-
-  Future<void> _loadUserInfo() async {
-    final userInfo = await AuthService().getUserInfo();
-    setState(() {
-      displayName = userInfo['name']!;
-      displayEmail = userInfo['email']!;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserProvider>(context, listen: false).fetchUserProfile();
     });
   }
 
@@ -83,156 +76,166 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Divider(height: 1, thickness: 1, color: Colors.black12),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // User Info
-            Column(
+      body: Consumer<UserProvider>(
+        builder: (context, userProvider, child) {
+          if (userProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator(color: _primary));
+          }
+
+          final userData = userProvider.userData;
+          final displayName = userData?['name'] ?? 'Guest';
+          final displayEmail = userData?['email'] ?? 'guest@gmail.com';
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  width: 130,
-                  height: 130,
-                  decoration: const BoxDecoration(shape: BoxShape.circle),
-                  clipBehavior: Clip.antiAlias,
-                  child: Image.asset(
-                      'assets/images/profile.jpg.png',
-                      fit: BoxFit.cover),
+                Column(
+                  children: [
+                    Container(
+                      width: 130,
+                      height: 130,
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      clipBehavior: Clip.antiAlias,
+                      child: Image.asset(
+                          'assets/images/profile.jpg.png',
+                          fit: BoxFit.cover),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(displayName,
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: Color.fromRGBO(51, 51, 51, 1))),
+                    const SizedBox(height: 4),
+                    Text(displayEmail,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Color.fromRGBO(118, 118, 118, 1))),
+                  ],
                 ),
+                const SizedBox(height: 16),
+
+                _SectionCard(
+                  children: [
+                    _OptionTile(
+                      icon: Icons.person_outline,
+                      title: 'My Profile',
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => MyProfilePage()));
+                      },
+                    ),
+                    const _TileDivider(),
+                    _OptionTile(
+                      icon: Icons.info_outline,
+                      title: 'About us',
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => AboutUsPage()));
+                      },
+                    ),
+                    const _TileDivider(),
+                    _OptionTile(
+                      icon: Icons.help_outline,
+                      title: 'Help & Feedback',
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => HelpAndFeedbackPage()));
+                      },
+                    ),
+                    const _TileDivider(),
+                    _OptionTile(
+                      icon: Icons.settings_outlined,
+                      title: 'Settings',
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => SettingScreen()));
+                      },
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 18),
+                const Text('More',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Color.fromRGBO(51, 51, 51, 1),
+                        fontWeight: FontWeight.w500)),
                 const SizedBox(height: 10),
-                Text(displayName,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Color.fromRGBO(51, 51, 51, 1))),
-                const SizedBox(height: 4),
-                Text(displayEmail,
-                    style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: Color.fromRGBO(118, 118, 118, 1))),
-              ],
-            ),
-            const SizedBox(height: 16),
 
-            // Profile Options
-            _SectionCard(
-              children: [
-                _OptionTile(
-                  icon: Icons.person_outline,
-                  title: 'My Profile',
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MyProfilePage()));
-                  },
-                ),
-                const _TileDivider(),
-                _OptionTile(
-                  icon: Icons.info_outline,
-                  title: 'About us',
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => AboutUsPage()));
-                  },
-                ),
-                const _TileDivider(),
-                _OptionTile(
-                  icon: Icons.help_outline,
-                  title: 'Help & Feedback',
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HelpAndFeedbackPage()));
-                  },
-                ),
-                const _TileDivider(),
-                _OptionTile(
-                  icon: Icons.settings_outlined,
-                  title: 'Settings',
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SettingScreen()));
-                  },
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 18),
-            const Text('More',
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Color.fromRGBO(51, 51, 51, 1),
-                    fontWeight: FontWeight.w500)),
-            const SizedBox(height: 10),
-
-            _SectionCard(
-              children: [
-                _OptionTile(
-                  icon: Icons.description_outlined,
-                  title: 'Invoice',
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => InvoiceScreen()));
-                  },
-                ),
-                const _TileDivider(),
-                _OptionTile(
-                  icon: Icons.report_gmailerrorred,
-                  title: 'Terms & Condition',
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => TermsAndConditionScreen()));
-                  },
-                ),
-                const _TileDivider(),
-                _OptionTile(
-                  icon: Icons.privacy_tip_outlined,
-                  title: 'Privacy Policy',
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => PrivacyPolicyScreen()));
-                  },
-                ),
-                const _TileDivider(),
-                _OptionTile(
-                  icon: Icons.logout,
-                  title: 'Log Out',
-                  danger: true,
-                  onTap: () async {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (_) => const Center(
-                        child: CircularProgressIndicator(color: _primary),
-                      ),
-                    );
-
-                    try {
-                      await AuthService().signOut();
-
-                      if (!context.mounted) return;
-
-                      Navigator.of(context, rootNavigator: true).pop();
-
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SignInScreen()),
-                            (route) => false,
-                      );
-                    } catch (e) {
-                      if (context.mounted) {
-                        Navigator.of(context, rootNavigator: true).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Logout failed: $e")),
+                _SectionCard(
+                  children: [
+                    _OptionTile(
+                      icon: Icons.description_outlined,
+                      title: 'Invoice',
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => InvoiceScreen()));
+                      },
+                    ),
+                    const _TileDivider(),
+                    _OptionTile(
+                      icon: Icons.report_gmailerrorred,
+                      title: 'Terms & Condition',
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => TermsAndConditionScreen()));
+                      },
+                    ),
+                    const _TileDivider(),
+                    _OptionTile(
+                      icon: Icons.privacy_tip_outlined,
+                      title: 'Privacy Policy',
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => PrivacyPolicyScreen()));
+                      },
+                    ),
+                    const _TileDivider(),
+                    _OptionTile(
+                      icon: Icons.logout,
+                      title: 'Log Out',
+                      danger: true,
+                      onTap: () async {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (_) => const Center(
+                            child: CircularProgressIndicator(color: _primary),
+                          ),
                         );
-                      }
-                    }
-                  },
+
+                        try {
+                          await AuthService().signOut();
+
+                          if (!context.mounted) return;
+
+                          Navigator.of(context, rootNavigator: true).pop();
+
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SignInScreen()),
+                                (route) => false,
+                          );
+                        } catch (e) {
+                          if (context.mounted) {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Logout failed: $e")),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

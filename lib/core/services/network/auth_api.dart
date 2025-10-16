@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:drivest_office/app/urls.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
 
@@ -108,6 +109,44 @@ class ApiService {
         'success': false,
         'message': 'Error: ${e.toString()}',
       };
+    }
+  }
+
+// ApiService.dart এ এই METHOD ADD/REPLACE করুন:
+  static Future<Map<String, dynamic>?> getUserProfileWithToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+      print("🔥 Token: $token"); // ✅ DEBUG
+
+      if (token == null || token.isEmpty) {
+        print("❌ No Token Found!");
+        return null;
+      }
+
+      final response = await http.get( // ✅ GET method
+        Uri.parse(Urls.userProfileUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // ✅ Bearer Token
+        },
+      );
+
+      print("🔥 Profile API Response: ${response.statusCode}"); // ✅ DEBUG
+      print("🔥 Profile API Body: ${response.body}"); // ✅ DEBUG
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final user = data['user'] ?? data; // ✅ Flexible response
+        print("✅ User Data: $user"); // ✅ DEBUG
+        return user;
+      } else {
+        print("❌ Profile API Error: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      print("❌ Profile Exception: $e");
+      return null;
     }
   }
 }

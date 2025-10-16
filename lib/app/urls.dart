@@ -7,4 +7,5 @@ class Urls{
   static const String verifyOtpUrl = '${_baseUrl}/verify-otp';
   static const String resetPassUrl = '${_baseUrl}/reset-password';
   static const String changePassUrl = '${_baseUrl}/user/change-password';
+  static const String userProfileUrl = '${_baseUrl}/user/profile';
 }
