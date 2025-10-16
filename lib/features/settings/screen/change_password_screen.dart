@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:drivest_office/app/urls.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../home/pages/profile/about_us_page.dart';
 import '../../../home/widgets/profile_page_app_bar.dart';
@@ -50,27 +54,56 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     }
 
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString("user_password", newPassword);
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? "";
 
-      _showSnackBar("Password changed successfully!", Colors.green);
+      // API call to update password
+      final response = await http.put(
+        Uri.parse(Urls.changePassUrl),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          "newPassword": newPassword,
+        }),
+      );
 
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const SettingScreen()),
-        );
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        await prefs.setString("user_password", newPassword);
+
+      } else {
+        _showSnackBar(data['message'] ?? "Failed to update password", Colors.green);
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const SettingScreen()),
+          );
+        }
       }
     } catch (e) {
-      _showSnackBar("Something went wrong", Colors.red);
+      _showSnackBar("Something went wrong: $e", Colors.red);
     }
   }
 
   void _showSnackBar(String message, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: color),
-    );
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: color,
+          duration: const Duration(seconds: 2),
+        ),
+      );
   }
+
+  // void _showSnackBar(String message, Color color) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(content: Text(message), backgroundColor: color),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
