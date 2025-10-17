@@ -1,11 +1,13 @@
-import 'package:drivest_office/home/pages/profile/my_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
+import '../../../core/services/network/user_provider.dart';
 import '../../widgets/profile_page_app_bar.dart';
+import '../profile/my_profile_page.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -31,6 +33,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     _loadUserData();
+    // 🔥 REMOVED: provider listener (NO MORE CRASH!)
+  }
+
+  // 🔥 REMOVED: _providerListener function (NO MORE CRASH!)
+
+  @override
+  void dispose() {
+    // 🔥 REMOVED: provider listener cleanup (NO MORE CRASH!)
+    nameController.dispose();
+    dobController.dispose();
+    emailController.dispose();
+    numberController.dispose();
+    addressController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUserData() async {
@@ -38,8 +54,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     setState(() {
       nameController.text = prefs.getString('user_name') ?? 'Guest';
       emailController.text = prefs.getString('user_email') ?? 'guest@gmail.com';
-      dobController.text = prefs.getString('user_dob') ?? '23/09/02';
-      numberController.text = prefs.getString('user_phone') ?? '01712345678';
+
+      // ✅ FIXED DOB LOADING (Server → UI format)
+      String rawDob = prefs.getString('user_dob') ?? '';
+      dobController.text = rawDob.isNotEmpty ? rawDob : ''; // Direct show
+      selectedDate = rawDob.isNotEmpty ? DateTime(2000, 12, 6) : DateTime.now();
+
+      numberController.text = prefs.getString('user_phone') ?? '';
       addressController.text = prefs.getString('user_address') ?? '2464 Royal Ln. Mesa, New Jersey 45463';
     });
   }
@@ -56,31 +77,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      lastDate: DateTime.now(), // 🔥 FIXED: Past dates only
     );
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        dobController.text = DateFormat('dd/MM/yy').format(picked);
+        dobController.text = DateFormat('dd/MM/yyyy').format(picked);
       });
     }
   }
 
   Future<void> _updateProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_name', nameController.text.trim());
-    await prefs.setString('user_dob', dobController.text.trim());
-    await prefs.setString('user_phone', numberController.text.trim());
-    await prefs.setString('user_address', addressController.text.trim());
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Profile updated successfully")),
+    if (nameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Name cannot be empty")),
+      );
+      return;
+    }
+
+    bool success = await userProvider.updateUserProfile(
+      name: nameController.text.trim(),
+      phone: numberController.text.trim(),
+      dob: dobController.text.trim(), // UI format → Provider will fix to YYYY-MM-DD
+      address: addressController.text.trim(),
     );
 
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const MyProfilePage()),
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("✅ Profile updated successfully")),
+      );
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MyProfilePage()),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("❌ Failed to update profile")),
       );
     }
   }
@@ -88,7 +125,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final imageSize = screenWidth > 400 ? 140.0 : screenWidth * 0.4; // 40% of screen
+    final imageSize = screenWidth > 400 ? 140.0 : screenWidth * 0.4;
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -102,15 +139,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // Main Profile Image - RESPONSIVE SIZE
                   ClipOval(
                     child: Container(
                       width: imageSize,
                       height: imageSize,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        //color: Colors.grey.shade200,
-                      ),
                       child: _image == null
                           ? Image.asset(
                         'assets/images/profile.jpg.png',
@@ -215,7 +247,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
             const SizedBox(height: 20),
-
 
             Text('Address', style: TextStyle(fontSize: screenWidth > 400 ? 18 : 16, fontWeight: FontWeight.w400)),
             const SizedBox(height: 8),

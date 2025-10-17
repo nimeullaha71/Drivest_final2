@@ -1,3 +1,4 @@
+// lib/providers/user_provider.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_api.dart';
@@ -9,18 +10,36 @@ class UserProvider extends ChangeNotifier {
   Map<String, dynamic>? get userData => _userData;
   bool get isLoading => _isLoading;
 
+  // load from SharedPreferences (used at app start)
+  Future<void> loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    _userData = {
+      'name': prefs.getString('user_name') ?? '',
+      'email': prefs.getString('user_email') ?? '',
+      'phone': prefs.getString('user_phone') ?? '',
+      'dob': prefs.getString('user_dob') ?? '',
+      'address': prefs.getString('user_address') ?? '',
+      // image, status etc. can be added if needed
+    };
+    notifyListeners();
+  }
+
+  // fetch fresh profile from API (keeps shared prefs in sync)
   Future<void> fetchUserProfile() async {
     print("UserProvider: Starting fetch...");
     _isLoading = true;
     notifyListeners();
 
-    _userData = await ApiService.getUserProfileWithToken();
+    final Map<String, dynamic>? remote = await ApiService.getUserProfileWithToken();
 
-    if (_userData != null) {
+    if (remote != null) {
+      _userData = Map<String, dynamic>.from(remote);
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('user_name', _userData!['name'] ?? '');
       await prefs.setString('user_email', _userData!['email'] ?? '');
       await prefs.setString('user_phone', _userData!['phone'] ?? '');
+      await prefs.setString('user_dob', _userData!['dob'] ?? '');
+      await prefs.setString('user_address', _userData!['address'] ?? '');
       print("Saved to SharedPrefs: ${_userData!['name']}");
     } else {
       print("No user data received!");
@@ -29,5 +48,71 @@ class UserProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
     print("UserProvider: Fetch complete! Data: $_userData");
+  }
+
+  // Update profile: calls API, updates local userData + SharedPreferences, notifies listeners
+  Future<bool> updateUserProfile({
+    required String name,
+    required String phone,
+    required String dob,
+    required String address,
+  }) async {
+    print("UserProvider: Starting update...");
+    _isLoading = true;
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('user_email') ?? '';
+
+    final Map<String, dynamic> updatedData = {
+      'name': name,
+      'phone': phone,
+      'dob': dob,
+      'address': address,
+      'email': email,
+    };
+    if (updatedData['dob'].isNotEmpty) {
+      updatedData['dob'] = updatedData['dob'].replaceAll(RegExp(r'T.*$'), '');
+    }
+
+    // 🔥 NEW DOB FIX - dd/MM/yy → YYYY-MM-DD
+    if (updatedData['dob'].contains('/') && updatedData['dob'].split('/').length == 3) {
+      List<String> parts = updatedData['dob'].split('/');
+      try {
+        int day = int.parse(parts[0]);
+        int month = int.parse(parts[1]);
+        int year = int.parse(parts[2]);
+        updatedData['dob'] = '${year.toString()}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
+        print('📤 CONVERTED DOB: ${updatedData['dob']}');
+      } catch (e) {
+        print('❌ DOB Parse Error: $e');
+      }
+    }
+
+    print('📤 FIXED DOB: ${updatedData['dob']}');
+
+    final bool success = await ApiService.updateUserProfile(updatedData);
+
+    if (success) {
+      _userData ??= {};
+      _userData!['name'] = name;
+      _userData!['phone'] = phone;
+      _userData!['dob'] = dob;
+      _userData!['address'] = address;
+
+      await prefs.setString('user_name', name);
+      await prefs.setString('user_phone', phone);
+      await prefs.setString('user_dob', dob);
+      await prefs.setString('user_address', address);
+
+      notifyListeners();
+      print("UserProvider: Local update done");
+    } else {
+      print("UserProvider: Update failed");
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return success;
   }
 }

@@ -149,4 +149,33 @@ class ApiService {
       return null;
     }
   }
+
+  static Future<bool> updateUserProfile(Map<String, dynamic> updatedData) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
+      final response = await http.put(
+        Uri.parse(Urls.editProfileUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(updatedData),
+      );
+
+      if (response.statusCode == 200) {
+        // Optionally parse and use returned user object if API sends it
+        print('ApiService.updateUserProfile -> success');
+        return true;
+      } else {
+        print('ApiService.updateUserProfile -> failed: ${response.statusCode} ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Exception updateUserProfile: $e');
+      return false;
+    }
+  }
+
 }
