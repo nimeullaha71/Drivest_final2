@@ -9,4 +9,5 @@ class Urls{
   static const String changePassUrl = '${_baseUrl}/user/change-password';
   static const String userProfileUrl = '${_baseUrl}/user/profile';
   static const String editProfileUrl = '${_baseUrl}/user/edit-profile';
+  static const String topBrandsUrl = '${_baseUrl}/user/brands';
 }

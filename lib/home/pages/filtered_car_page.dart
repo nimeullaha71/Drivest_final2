@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:drivest_office/app/urls.dart';
+import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,23 +23,23 @@ class _FilteredCarPageState extends State<FilteredCarPage> {
   }
 
   Future<void> fetchFilteredCars() async {
-    final baseUrl = "https://ai-car-app-sandy.vercel.app";
+    //final baseUrl = "https://ai-car-app-sandy.vercel.app";
     final queryParams = {
-      'make': widget.filters['brand'],
-      'fuelType': widget.filters['fuelType'],
-      'bodyType': widget.filters['carType'],
-      'condition': widget.filters['condition'],
-      'location': widget.filters['location'],
-      'minPrice': widget.filters['minPrice'].toString(),
-      'maxPrice': widget.filters['maxPrice'].toString(),
-      'yearMin': widget.filters['yearMin'].toString(),
-      'yearMax': widget.filters['yearMax'].toString(),
+      'make': widget.filters['brand'] ?? '',
+      'fuelType': widget.filters['fuelType'] ?? '',
+      'bodyType': widget.filters['carType'] ?? '',
+      'condition': widget.filters['condition'] ?? '',
+      'location': widget.filters['location'] ?? '',
+      'minPrice': (widget.filters['minPrice'] ?? 0).toString(),
+      'maxPrice': (widget.filters['maxPrice'] ?? 1000000).toString(),
+      'yearMin': (widget.filters['yearMin'] ?? 2000).toString(),
+      'yearMax': (widget.filters['yearMax'] ?? DateTime.now().year).toString(),
       'status': 'published',
       'page': '1',
       'limit': '20',
     };
 
-    final uri = Uri.parse('$baseUrl/cars').replace(queryParameters: queryParams);
+    final uri = Uri.parse(Urls.carsUrl).replace(queryParameters: queryParams);
     print("Fetching cars with filters: $queryParams");
     print("API URL: $uri");
 
@@ -62,10 +64,7 @@ class _FilteredCarPageState extends State<FilteredCarPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Filtered Cars'),
-        backgroundColor: const Color.fromRGBO(1, 80, 147, 1),
-      ),
+      appBar: DrivestAppBar(title: "Filtered Cars"),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : filteredCars.isEmpty
@@ -110,12 +109,10 @@ class _FilteredCarPageState extends State<FilteredCarPage> {
                 style: const TextStyle(fontSize: 12, height: 1.4),
               ),
               isThreeLine: true,
-
-              onTap: (){
-                //TODO : Navigator to the details page ;
+              onTap: () {
+                //TODO: Navigate to car details page
               },
-            )
-
+            ),
           );
         },
       ),
