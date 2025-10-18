@@ -1,17 +1,96 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../core/services/network/favourite_service.dart';
 import '../model/car_model.dart';
 
 class SavedCarController extends GetxController {
   var savedCars = <CarModel>[].obs;
-  bool toggleSave(CarModel car) {
-    if (savedCars.contains(car)) {
-      savedCars.remove(car);
-      return false;
-    } else {
-      savedCars.add(car);
-      return true;
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadSavedCars(); // Controller তৈরি হলে fetch করবে
+  }
+
+  // ✅ Load all saved cars from API
+  Future<void> loadSavedCars() async {
+    try {
+      final cars = await FavoriteService.getSavedCars(); // GET API
+      savedCars.assignAll(cars); // RxList auto update
+    } catch (e) {
+      print("❌ Failed to load saved cars: $e");
+      Get.snackbar(
+        "Error",
+        "Failed to load saved cars",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange.shade50,
+        colorText: Colors.orange.shade800,
+      );
     }
   }
 
-  bool isSaved(CarModel car) => savedCars.contains(car);
+  // ✅ Toggle favourite add/remove
+  Future<void> toggleSave(CarModel car) async {
+    final alreadySaved = savedCars.any((c) => c.id == car.id);
+
+    // UI instant update
+    if (alreadySaved) {
+      savedCars.removeWhere((c) => c.id == car.id);
+    } else {
+      savedCars.add(car);
+    }
+
+    // API call
+    try {
+      final result = alreadySaved
+          ? await FavoriteService.unfavoriteCar(car.id)
+          : await FavoriteService.favoriteCar(car.id);
+
+      final success = result['success'] == true;
+      final message = result['message'] ?? (success ? 'Done' : 'Failed');
+
+      if (!success) {
+        // Revert UI if API failed
+        if (alreadySaved) {
+          savedCars.add(car);
+        } else {
+          savedCars.removeWhere((c) => c.id == car.id);
+        }
+
+        Get.snackbar(
+          "Error",
+          message,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.orange.shade50,
+          colorText: Colors.orange.shade800,
+        );
+      } else {
+        // Show success snackbar
+        Get.snackbar(
+          alreadySaved ? "Removed from favourites" : "Added to favourites",
+          message,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: alreadySaved ? Colors.red.shade50 : Colors.green.shade50,
+          colorText: alreadySaved ? Colors.red.shade800 : Colors.green.shade800,
+        );
+      }
+    } catch (e) {
+      print("❌ Favourite toggle error: $e");
+      // Revert UI
+      if (alreadySaved) {
+        savedCars.add(car);
+      } else {
+        savedCars.removeWhere((c) => c.id == car.id);
+      }
+      Get.snackbar(
+        "Error",
+        "Something went wrong",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange.shade50,
+        colorText: Colors.orange.shade800,
+      );
+    }
+  }
+
+  bool isSaved(CarModel car) => savedCars.any((c) => c.id == car.id);
 }

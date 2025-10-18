@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/services/network/user_provider.dart';
@@ -40,7 +41,7 @@ class _MyAppState extends State<MyApp> {
         providers: [
           ChangeNotifierProvider(create: (_) => UserProvider()), // ✅ এটা ADD
         ],
-      child: MaterialApp(
+      child: GetMaterialApp(
         title: 'Drivest',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
