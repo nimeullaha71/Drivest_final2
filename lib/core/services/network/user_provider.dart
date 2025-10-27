@@ -42,7 +42,7 @@ class UserProvider extends ChangeNotifier {
       await prefs.setString('user_phone', _userData!['phone'] ?? '');
       await prefs.setString('user_dob', _userData!['dob'] ?? '');
       await prefs.setString('user_address', _userData!['address'] ?? '');
-      await prefs.setString('user_image', _userData!['profile_image'] ?? '');
+      await prefs.setString('image', _userData!['image'] ?? '');
       print("Saved to SharedPrefs: ${_userData!['name']}");
     } else {
       print("No user data received!");
@@ -59,10 +59,8 @@ class UserProvider extends ChangeNotifier {
     required String phone,
     required String dob,
     required String address,
-    String? profileImage,
-
+    File? imageFile, // <-- পরিবর্তন ১: File টাইপ image গ্রহণ করবে
   }) async {
-    print("UserProvider: Starting update...");
     _isLoading = true;
     notifyListeners();
 
@@ -76,50 +74,45 @@ class UserProvider extends ChangeNotifier {
       'address': address,
       'email': email,
     };
-    if (updatedData['dob'].isNotEmpty) {
-      updatedData['dob'] = updatedData['dob'].replaceAll(RegExp(r'T.*$'), '');
-    }
 
-    // 🔥 NEW DOB FIX - dd/MM/yy → YYYY-MM-DD
+    // 🔹 date ফরম্যাট ঠিক করো
     if (updatedData['dob'].contains('/') && updatedData['dob'].split('/').length == 3) {
       List<String> parts = updatedData['dob'].split('/');
       try {
-        int day = int.parse(parts[0]);
-        int month = int.parse(parts[1]);
-        int year = int.parse(parts[2]);
-        updatedData['dob'] = '${year.toString()}-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
-        print('📤 CONVERTED DOB: ${updatedData['dob']}');
+        updatedData['dob'] =
+        '${parts[2]}-${parts[1].padLeft(2, '0')}-${parts[0].padLeft(2, '0')}';
       } catch (e) {
         print('❌ DOB Parse Error: $e');
       }
     }
 
-    print('📤 FIXED DOB: ${updatedData['dob']}');
-
-    final bool success = await ApiService.updateUserProfile(updatedData);
+    // 🔹 ApiService কল করো
+    final bool success =
+    await ApiService.updateUserProfile(updatedData, imageFile: imageFile);
 
     if (success) {
+      // local update
       _userData ??= {};
       _userData!['name'] = name;
       _userData!['phone'] = phone;
       _userData!['dob'] = dob;
       _userData!['address'] = address;
-      if (profileImage != null) _userData!['image'] = profileImage;
+      if (imageFile != null) {
+        _userData!['image'] = imageFile.path;
+      }
 
       await prefs.setString('user_name', name);
       await prefs.setString('user_phone', phone);
       await prefs.setString('user_dob', dob);
       await prefs.setString('user_address', address);
-      if (profileImage != null) await prefs.setString('image', profileImage);
-
-      notifyListeners();
-      print("UserProvider: Local update done");
-    } else {
-      print("UserProvider: Update failed");
+      if (imageFile != null) {
+        await prefs.setString('image', imageFile.path);
+      }
     }
 
     _isLoading = false;
     notifyListeners();
     return success;
   }
+
 }

@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:drivest_office/app/urls.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../home/combined_home_page.dart';
 
 class ApiService {
 
@@ -150,32 +153,45 @@ class ApiService {
     }
   }
 
-  static Future<bool> updateUserProfile(Map<String, dynamic> updatedData) async {
+  static Future<bool> updateUserProfile(Map<String, dynamic> data, {File? imageFile}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token') ?? '';
+      final token = prefs.getString('token'); // যদি তোমার API তে token লাগে
 
-      final response = await http.put(
+      var request = http.MultipartRequest(
+        'PUT', // বা 'PUT' যদি তোমার API তে PUT লাগে
         Uri.parse(Urls.editProfileUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(updatedData),
       );
 
+      // 🔹 normal text fields যোগ করো
+      data.forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
+
+      // 🔹 image file থাকলে সেটাও যোগ করো
+      if (imageFile != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'image', // <-- API তে যে key লাগে সেটা দাও
+          imageFile.path,
+        ));
+      }
+
+      // 🔹 Authorization থাকলে header এ যোগ করো
+      if (token != null && token.isNotEmpty) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      var response = await request.send();
       if (response.statusCode == 200) {
-        // Optionally parse and use returned user object if API sends it
-        print('ApiService.updateUserProfile -> success');
+        print("✅ Profile updated successfully!");
         return true;
       } else {
-        print('ApiService.updateUserProfile -> failed: ${response.statusCode} ${response.body}');
+        print("❌ Failed: ${response.statusCode}");
         return false;
       }
     } catch (e) {
-      print('Exception updateUserProfile: $e');
+      print("⚠️ Error updating profile: $e");
       return false;
     }
   }
-
 }

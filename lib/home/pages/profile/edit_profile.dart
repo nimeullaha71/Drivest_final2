@@ -94,7 +94,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       phone: numberController.text.trim(),
       dob: dobController.text.trim(),
       address: addressController.text.trim(),
-     // imageFile: _image, // Provider should handle file upload
+      imageFile: _image, // এখন image ও যাবে form-data তে
     );
 
     if (success) {
