@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../core/services/network/favourite_service.dart';
 import '../home/controller/saved_car_controller.dart';
 import '../home/model/car_model.dart';
 
