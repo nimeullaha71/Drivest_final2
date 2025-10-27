@@ -18,6 +18,7 @@ class UserProvider extends ChangeNotifier {
       'phone': prefs.getString('user_phone') ?? '',
       'dob': prefs.getString('user_dob') ?? '',
       'address': prefs.getString('user_address') ?? '',
+      'profile_image': prefs.getString('user_image') ?? '',
       // image, status etc. can be added if needed
     };
     notifyListeners();
@@ -39,6 +40,7 @@ class UserProvider extends ChangeNotifier {
       await prefs.setString('user_phone', _userData!['phone'] ?? '');
       await prefs.setString('user_dob', _userData!['dob'] ?? '');
       await prefs.setString('user_address', _userData!['address'] ?? '');
+      await prefs.setString('user_image', _userData!['profile_image'] ?? '');
       print("Saved to SharedPrefs: ${_userData!['name']}");
     } else {
       print("No user data received!");
@@ -55,6 +57,7 @@ class UserProvider extends ChangeNotifier {
     required String phone,
     required String dob,
     required String address,
+    String? profileImage,
   }) async {
     print("UserProvider: Starting update...");
     _isLoading = true;
@@ -98,11 +101,13 @@ class UserProvider extends ChangeNotifier {
       _userData!['phone'] = phone;
       _userData!['dob'] = dob;
       _userData!['address'] = address;
+      if (profileImage != null) _userData!['image'] = profileImage;
 
       await prefs.setString('user_name', name);
       await prefs.setString('user_phone', phone);
       await prefs.setString('user_dob', dob);
       await prefs.setString('user_address', address);
+      if (profileImage != null) await prefs.setString('image', profileImage);
 
       notifyListeners();
       print("UserProvider: Local update done");

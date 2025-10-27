@@ -98,10 +98,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 130,
                       decoration: const BoxDecoration(shape: BoxShape.circle),
                       clipBehavior: Clip.antiAlias,
-                      child: Image.asset(
-                          'assets/images/profile.jpg.png',
-                          fit: BoxFit.cover),
+                      child: userData != null && userData['image'] != null && userData['image'].isNotEmpty
+                          ? Image.network(
+                        userData['image'],
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(child: CircularProgressIndicator(color: _primary));
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/profile.jpg.png',
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      )
+                          : Image.asset(
+                        'assets/images/profile.jpg.png',
+                        fit: BoxFit.cover,
+                      ),
                     ),
+
                     const SizedBox(height: 10),
                     Text(displayName,
                         style: const TextStyle(

@@ -67,10 +67,31 @@ class _TopAppBarState extends State<TopAppBar> {
                         decoration: const BoxDecoration(
                             color: Colors.white, shape: BoxShape.circle),
                         child: ClipOval(
-                          child: Image.asset('assets/images/profile_img.jpg',
-                              width: 42, height: 42, fit: BoxFit.cover),
+                          child: userData?['image'] != null && userData!['image'].isNotEmpty
+                              ? Image.network(
+                            userData['image'],
+                            width: 42,
+                            height: 42,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              // যদি network image fail করে, default placeholder দেখাবে
+                              return Image.asset(
+                                'assets/images/profile_img.jpg',
+                                width: 42,
+                                height: 42,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          )
+                              : Image.asset(
+                            'assets/images/profile_img.jpg',
+                            width: 42,
+                            height: 42,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
+
                       const SizedBox(width: 10),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
