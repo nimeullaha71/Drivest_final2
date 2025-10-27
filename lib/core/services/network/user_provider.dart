@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_api.dart';
@@ -58,6 +60,7 @@ class UserProvider extends ChangeNotifier {
     required String dob,
     required String address,
     String? profileImage,
+
   }) async {
     print("UserProvider: Starting update...");
     _isLoading = true;

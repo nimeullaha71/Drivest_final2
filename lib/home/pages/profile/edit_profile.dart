@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 import '../../../core/services/network/user_provider.dart';
 import '../../widgets/profile_page_app_bar.dart';
@@ -32,37 +31,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserData();
-    // 🔥 REMOVED: provider listener (NO MORE CRASH!)
-  }
-
-  // 🔥 REMOVED: _providerListener function (NO MORE CRASH!)
-
-  @override
-  void dispose() {
-    // 🔥 REMOVED: provider listener cleanup (NO MORE CRASH!)
-    nameController.dispose();
-    dobController.dispose();
-    emailController.dispose();
-    numberController.dispose();
-    addressController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _loadUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      nameController.text = prefs.getString('user_name') ?? 'Guest';
-      emailController.text = prefs.getString('user_email') ?? 'guest@gmail.com';
-
-      // ✅ FIXED DOB LOADING (Server → UI format)
-      String rawDob = prefs.getString('user_dob') ?? '';
-      dobController.text = rawDob.isNotEmpty ? rawDob : ''; // Direct show
-      selectedDate = rawDob.isNotEmpty ? DateTime(2000, 12, 6) : DateTime.now();
-
-      numberController.text = prefs.getString('user_phone') ?? '';
-      addressController.text = prefs.getString('user_address') ?? '2464 Royal Ln. Mesa, New Jersey 45463';
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.fetchUserProfile().then((_) {
+      _loadUserDataFromProvider();
     });
+  }
+
+  void _loadUserDataFromProvider() {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final data = userProvider.userData;
+
+    if (data != null) {
+      setState(() {
+        nameController.text = data['name'] ?? 'Guest';
+        emailController.text = data['email'] ?? 'guest@gmail.com';
+        numberController.text = data['phone'] ?? '';
+        addressController.text = data['address'] ?? '';
+
+        String rawDob = data['dob'] ?? '';
+        if (rawDob.isNotEmpty) {
+          dobController.text = DateFormat('dd/MM/yyyy').format(DateTime.parse(rawDob));
+          selectedDate = DateTime.parse(rawDob);
+        }
+      });
+    }
   }
 
   Future<void> _pickImage() async {
@@ -77,7 +69,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(), // 🔥 FIXED: Past dates only
+      lastDate: DateTime.now(),
     );
     if (picked != null && picked != selectedDate) {
       setState(() {
@@ -100,15 +92,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     bool success = await userProvider.updateUserProfile(
       name: nameController.text.trim(),
       phone: numberController.text.trim(),
-      dob: dobController.text.trim(), // UI format → Provider will fix to YYYY-MM-DD
+      dob: dobController.text.trim(),
       address: addressController.text.trim(),
+     // imageFile: _image, // Provider should handle file upload
     );
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("✅ Profile updated successfully")),
       );
-
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -130,161 +122,173 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: const DrivestAppBar(title: "Edit Profile"),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(screenWidth > 600 ? 24.0 : 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  ClipOval(
-                    child: Container(
-                      width: imageSize,
-                      height: imageSize,
-                      child: _image == null
-                          ? Image.asset(
-                        'assets/images/profile.jpg.png',
-                        width: imageSize,
-                        height: imageSize,
-                        fit: BoxFit.cover,
-                      )
-                          : Image.file(
-                        _image!,
-                        width: imageSize,
-                        height: imageSize,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: imageSize * 0.10,
-                    right: imageSize * 0.10,
-                    child: Container(
-                      width: imageSize * 0.28,
-                      height: imageSize * 0.28,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: primary,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 6,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: Icon(
-                          Icons.add_a_photo_outlined,
-                          size: imageSize * 0.15,
-                          color: Colors.white,
+      body: Consumer<UserProvider>(
+        builder: (context, userProvider, child) {
+          // 🔹 API থেকে আসা profile image
+          String? profileImageUrlRaw = userProvider.userData?['image'];
+          final profileImageUrl = (profileImageUrlRaw != null && profileImageUrlRaw.isNotEmpty)
+              ? (profileImageUrlRaw.startsWith('http')
+              ? profileImageUrlRaw
+              : 'https://yourserver.com/$profileImageUrlRaw')
+              : null;
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.all(screenWidth > 600 ? 24.0 : 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      ClipOval(
+                        child: Container(
+                          width: imageSize,
+                          height: imageSize,
+                          child: _image != null
+                              ? Image.file(
+                            _image!,
+                            width: imageSize,
+                            height: imageSize,
+                            fit: BoxFit.cover,
+                          )
+                              : (profileImageUrl != null
+                              ? Image.network(
+                            profileImageUrl,
+                            width: imageSize,
+                            height: imageSize,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Image.asset(
+                                  'assets/images/profile.jpg.png',
+                                  width: imageSize,
+                                  height: imageSize,
+                                  fit: BoxFit.cover,
+                                ),
+                          )
+                              : Image.asset(
+                            'assets/images/profile.jpg.png',
+                            width: imageSize,
+                            height: imageSize,
+                            fit: BoxFit.cover,
+                          )),
                         ),
-                        onPressed: _pickImage,
+                      ),
+                      Positioned(
+                        bottom: 0, // image-এর border এর একদম নিচে বসবে
+                        right: 0,  // ডানদিকে border line touch করবে
+                        child: Container(
+                          width: imageSize * 0.30, // icon এর size responsive
+                          height: imageSize * 0.30,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white, // ছোট সাদা border effect এর জন্য
+                            border: Border.all(color: Colors.grey.shade300, width: 2),
+                          ),
+                          child: Container(
+                            margin: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: primary,
+                            ),
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: Icon(
+                                Icons.add_a_photo_outlined,
+                                size: imageSize * 0.15,
+                                color: Colors.white,
+                              ),
+                              onPressed: _pickImage,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    ],
+                  ),
+                ),
+                SizedBox(height: imageSize * 0.15),
+                _buildTextField('Full Name', nameController),
+                const SizedBox(height: 20),
+                _buildDateField('Date of Birth', dobController),
+                const SizedBox(height: 20),
+                _buildTextField('Email', emailController, enabled: false),
+                const SizedBox(height: 20),
+                _buildTextField('Phone Number', numberController, keyboardType: TextInputType.phone),
+                const SizedBox(height: 20),
+                _buildTextField('Address', addressController, maxLines: 2),
+                SizedBox(height: screenWidth > 400 ? 40 : 30),
+                SizedBox(
+                  width: double.infinity,
+                  height: screenWidth > 400 ? 60 : 56,
+                  child: ElevatedButton(
+                    onPressed: _updateProfile,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                      elevation: 8,
+                      shadowColor: primary.withOpacity(.35),
+                    ),
+                    child: Text(
+                      'Update',
+                      style: TextStyle(
+                        fontSize: screenWidth > 400 ? 18 : 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            SizedBox(height: imageSize * 0.15),
-
-            Text('Full Name', style: TextStyle(fontSize: screenWidth > 400 ? 18 : 16, fontWeight: FontWeight.w400)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                hintText: 'Enter full name',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
-                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            Text('Date of Birth', style: TextStyle(fontSize: screenWidth > 400 ? 18 : 16, fontWeight: FontWeight.w400)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: dobController,
-              readOnly: true,
-              decoration: InputDecoration(
-                hintText: 'Select date of birth',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
-                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.calendar_today),
-                  onPressed: () => _selectDate(context),
                 ),
-              ),
+              ],
             ),
-            const SizedBox(height: 20),
-
-            Text('Email', style: TextStyle(fontSize: screenWidth > 400 ? 18 : 16, fontWeight: FontWeight.w400)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: emailController,
-              enabled: false,
-              decoration: InputDecoration(
-                hintText: 'Email',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
-                filled: true,
-                fillColor: Colors.grey.shade200,
-                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            Text('Phone Number', style: TextStyle(fontSize: screenWidth > 400 ? 18 : 16, fontWeight: FontWeight.w400)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: numberController,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                hintText: 'Enter phone number',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
-                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            Text('Address', style: TextStyle(fontSize: screenWidth > 400 ? 18 : 16, fontWeight: FontWeight.w400)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: addressController,
-              maxLines: 2,
-              decoration: InputDecoration(
-                hintText: 'Enter address',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
-                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              ),
-            ),
-            SizedBox(height: screenWidth > 400 ? 40 : 30),
-
-            SizedBox(
-              width: double.infinity,
-              height: screenWidth > 400 ? 60 : 56,
-              child: ElevatedButton(
-                onPressed: _updateProfile,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-                  elevation: 8,
-                  shadowColor: primary.withOpacity(.35),
-                ),
-                child: Text(
-                  'Update',
-                  style: TextStyle(
-                    fontSize: screenWidth > 400 ? 18 : 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller,
+      {bool enabled = true, int maxLines = 1, TextInputType keyboardType = TextInputType.text}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16)),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          enabled: enabled,
+          maxLines: maxLines,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            hintText: 'Enter $label',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
+            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16)),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          readOnly: true,
+          decoration: InputDecoration(
+            hintText: 'Select $label',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
+            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.calendar_today),
+              onPressed: () => _selectDate(context),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
