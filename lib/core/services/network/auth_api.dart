@@ -218,5 +218,33 @@ class ApiService {
     }
   }
 
+  static Future<List<dynamic>> getCarList({String query = ''}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+      final url = query.isEmpty
+          ? Urls.carsUrl
+          : '${Urls.carsUrl}?search=$query';
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        return body['data'] ?? [];
+      } else {
+        print('❌ getCarList failed: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('❌ getCarList exception: $e');
+      return [];
+    }
+  }
 
 }

@@ -99,7 +99,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
             const Text("Cardholder name",
                 style: TextStyle(
-                    fontWeight: FontWeight.w600, color: Colors.black54)),
+                    fontWeight: FontWeight.w600, color: Colors.black54),
+            ),
             const SizedBox(height: 10),
             TextField(
               decoration: InputDecoration(
