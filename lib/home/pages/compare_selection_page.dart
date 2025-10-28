@@ -137,7 +137,7 @@ class _CompareSelectionPageState extends State<CompareSelectionPage> {
                   context,
                   MaterialPageRoute(
                       builder: (_) => CompareResultPage(
-                        //selectedCars: selectedCars,
+                        selectedCars: selectedCars,
                       )));
             }
                 : null,
