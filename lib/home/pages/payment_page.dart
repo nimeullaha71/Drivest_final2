@@ -84,7 +84,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           decoration: InputDecoration(
                             hintText: "CVC",
                             border: InputBorder.none,
-                            suffixIcon: Icon(Icons.credit_card, color: Colors.grey[400]),
+                            suffixIcon: Image.asset('assets/images/cvc.png', height: 22),
                           ),
                           keyboardType: TextInputType.number,
                         ),
