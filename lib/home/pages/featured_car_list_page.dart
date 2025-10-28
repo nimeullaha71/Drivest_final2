@@ -16,6 +16,7 @@ class FeaturedCarListPage extends StatelessWidget {
   final String titleName;
   const FeaturedCarListPage({super.key, required this.titleName});
 
+
   @override
   Widget build(BuildContext context) {
     final savedController = Get.find<SavedCarController>();
@@ -77,7 +78,7 @@ class FeaturedCarListPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const CarDetailsScreen(),
+                                builder: (_) => CarDetailsScreen(carId: car.id),
                               ),
                             );
                           },

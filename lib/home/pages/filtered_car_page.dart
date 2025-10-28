@@ -3,6 +3,10 @@ import 'package:drivest_office/app/urls.dart';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../core/services/network/user_provider.dart';
 
 class FilteredCarPage extends StatefulWidget {
   final Map<String, dynamic> filters;
@@ -23,6 +27,9 @@ class _FilteredCarPageState extends State<FilteredCarPage> {
   }
 
   Future<void> fetchFilteredCars() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
     //final baseUrl = "https://ai-car-app-sandy.vercel.app";
     final queryParams = {
       'make': widget.filters['brand'] ?? '',
@@ -35,6 +42,7 @@ class _FilteredCarPageState extends State<FilteredCarPage> {
       'yearMin': (widget.filters['yearMin'] ?? 2000).toString(),
       'yearMax': (widget.filters['yearMax'] ?? DateTime.now().year).toString(),
       'status': 'published',
+      'sort': '-publishedAt',
       'page': '1',
       'limit': '20',
     };
@@ -44,7 +52,14 @@ class _FilteredCarPageState extends State<FilteredCarPage> {
     print("API URL: $uri");
 
     try {
-      final response = await http.get(uri);
+      final response = await http.get(
+          uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+
+      );
       final jsonData = json.decode(response.body);
 
       print("API Response: $jsonData");

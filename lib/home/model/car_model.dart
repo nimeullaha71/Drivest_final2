@@ -8,8 +8,10 @@ class CarModel {
   final String city;
   final String country;
   final String imageUrl;
+  final String description;
+  final int specs;
 
-  CarModel({
+  CarModel( {
     required this.id,
     required this.title,
     required this.color,
@@ -19,6 +21,8 @@ class CarModel {
     required this.city,
     required this.country,
     required this.imageUrl,
+    required this.description,
+    required this.specs,
   });
 
   factory CarModel.fromJson(Map<String, dynamic> json) {
@@ -39,6 +43,9 @@ class CarModel {
       city: json['city'] ?? '',
       country: json['country'] ?? '',
       imageUrl: json['media']?['cover']?['url'] ?? '',
+      description: json['description'] ?? '',
+      specs: json['specs']?['seats'] ?? 0,
     );
   }
+
 }

@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../home/combined_home_page.dart';
+import '../../../home/model/car_model.dart';
 
 class ApiService {
 
@@ -194,4 +195,28 @@ class ApiService {
       return false;
     }
   }
+
+  static Future<CarModel> fetchCarDetails(String carId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? ''; // user token
+    final url = Uri.parse('$baseUrl/user/cars-details/$carId');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonData = jsonDecode(response.body);
+      return CarModel.fromJson(jsonData['data']);
+    } else {
+      throw Exception(
+          'Failed to fetch car details (${response.statusCode}): ${response.body}');
+    }
+  }
+
+
 }

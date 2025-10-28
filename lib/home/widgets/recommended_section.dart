@@ -68,7 +68,7 @@ class RecommendedSection extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const CarDetailsScreen()),
+                        MaterialPageRoute(builder: (_) =>  CarDetailsScreen(carId: car.id,)),
                       );
                     },
                     child: Container(

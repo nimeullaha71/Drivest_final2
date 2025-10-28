@@ -71,7 +71,7 @@ class FeaturedCarSinglePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const CarDetailsScreen()),
+                            builder: (context) =>  CarDetailsScreen(carId: car.id)),
                       );
                     },
                     child: Container(

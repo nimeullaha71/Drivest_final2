@@ -13,4 +13,5 @@ class Urls{
   static const String showFavouriteUrl = '${_baseUrl}/user/favorites';
   static const String addFavouriteUrl = '${_baseUrl}/user/favorites/toggle';
   static String deleteFavouriteUrl(carId) => "$_baseUrl/user/favorites/$carId";
+  static String carDetailsUrl(carId) => "$_baseUrl/user/cars-details/$carId";
 }

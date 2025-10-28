@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'widgets/top_appbar.dart';
 import 'widgets/condition_selector.dart';
@@ -13,7 +14,7 @@ import 'widgets/recommended_section.dart';
 import 'widgets/ai_suggestion_card.dart';
 import 'pages/filter_page.dart';
 
-const String baseUrl = "https://ai-car-app-sandy.vercel.app/";
+const String baseUrl = "https://ai-car-app-sandy.vercel.app";
 
 class CombinedHomePage extends StatefulWidget {
   const CombinedHomePage({super.key});
@@ -40,6 +41,10 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
   }
 
   Future<void> fetchCars([Map<String, dynamic>? filters]) async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
     if (!mounted) return;
     setState(() => isLoading = true);
 
@@ -63,10 +68,16 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
 
       debugPrint('Query Params: $queryParams');
 
-      final uri = Uri.parse('$baseUrl/cars').replace(queryParameters: queryParams);
+      final uri = Uri.parse('$baseUrl/user/cars').replace(queryParameters: queryParams);
       debugPrint('API URL: $uri');
 
-      final res = await http.get(uri);
+      final res = await http.get(
+          uri,
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      );
       if (!mounted) return;
 
       if (res.statusCode == 200) {
