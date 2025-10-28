@@ -1,5 +1,6 @@
 import 'package:drivest_office/features/auth/screen/sign_in_screen.dart';
 import 'package:drivest_office/features/settings/screen/setting_screen.dart';
+import 'package:drivest_office/home/pages/payment_page.dart';
 import 'package:drivest_office/home/pages/profile/teams_condition_screen.dart';
 import 'package:drivest_office/home/pages/profile/about_us_page.dart';
 import 'package:drivest_office/home/pages/profile/help_&_feedback_page.dart';
@@ -187,10 +188,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     _OptionTile(
                       icon: Icons.description_outlined,
-                      title: 'Invoice',
+                      title: 'Payment',
                       onTap: () {
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => InvoiceScreen()));
+                            MaterialPageRoute(builder: (context) => PaymentScreen()));
                       },
                     ),
                     const _TileDivider(),
