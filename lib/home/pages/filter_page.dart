@@ -67,7 +67,6 @@ class _FilterPageState extends State<FilterPage> {
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: ListView(
           children: [
-            _buildSearchField(),
 
             _buildSectionTitle("Car Brand"),
             _buildSingleSelectChips(brands, selectedBrand, (val) {
@@ -114,25 +113,6 @@ class _FilterPageState extends State<FilterPage> {
             _buildBottomButton(),
             SizedBox(height: 24),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchField() {
-    return Padding(
-      padding: EdgeInsets.only(top: 8, bottom: 16),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: "search",
-          prefixIcon: Icon(Icons.search, color: Colors.grey),
-          filled: true,
-          fillColor: Colors.grey[100],
-          contentPadding: EdgeInsets.symmetric(horizontal: 16),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
         ),
       ),
     );
