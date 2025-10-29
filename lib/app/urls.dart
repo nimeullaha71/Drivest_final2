@@ -11,6 +11,7 @@ class Urls{
   static const String editProfileUrl = '${_baseUrl}/user/edit-profile';
   static const String topBrandsUrl = '${_baseUrl}/user/brands';
   static const String showFavouriteUrl = '${_baseUrl}/user/favorites';
+  static const String createStripeSessionUrl = '${_baseUrl}/subscription/create';
   static const String addFavouriteUrl = '${_baseUrl}/user/favorites/toggle';
   static String deleteFavouriteUrl(carId) => "$_baseUrl/user/favorites/$carId";
   static String carDetailsUrl(carId) => "$_baseUrl/user/cars-details/$carId";

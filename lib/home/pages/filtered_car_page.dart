@@ -3,10 +3,7 @@ import 'package:drivest_office/app/urls.dart';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../core/services/network/user_provider.dart';
 
 class FilteredCarPage extends StatefulWidget {
   final Map<String, dynamic> filters;
@@ -30,7 +27,6 @@ class _FilteredCarPageState extends State<FilteredCarPage> {
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    //final baseUrl = "https://ai-car-app-sandy.vercel.app";
     final queryParams = {
       'make': widget.filters['brand'] ?? '',
       'fuelType': widget.filters['fuelType'] ?? '',
