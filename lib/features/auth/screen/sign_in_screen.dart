@@ -4,6 +4,7 @@ import 'package:drivest_office/main_bottom_nav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../app/asset_paths.dart';
+import '../../../home/pages/payment_page.dart';
 import '../services/auth_service.dart';
 import 'forgot_password_screen.dart';
 
@@ -36,27 +37,43 @@ class _SignInScreenState extends State<SignInScreen> {
         password: _passwordController.text.trim(),
       );
 
-      if (success && mounted) {
+      if (!mounted) return;
+
+      if (success) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MainBottomNavScreen()),
+          MaterialPageRoute(builder: (_) => const MainBottomNavScreen()),
         );
+      }
+    } catch (e) {
+      if (e.toString().contains("TRIAL_EXPIRED")) {
+        if (!mounted) return;
+        // Use microtask to ensure navigation after build
+        Future.microtask(() {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const PaymentPage()),
+          );
+        });
       } else {
         _showError("Invalid email or password");
       }
-    } catch (e) {
-      _showError(e.toString());
-    } finally {
-      setState(() => _isLoading = false);
+    }
+    finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  Future<void> _onGoogleSignIn() async {
-    _showError("Google Sign-In এখনো চালু হয়নি");
-  }
-
-  Future<void> _onAppleSignIn() async {
-    _showError("Apple Sign-In এখনো চালু হয়নি");
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message.replaceAll("Exception: ", ""),
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   void _onForgotPassword() {
@@ -76,16 +93,12 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message.replaceAll("Exception: ", ""),
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.red,
-      ),
-    );
+  Future<void> _onGoogleSignIn() async {
+    _showError("Google Sign-In এখনো চালু হয়নি");
+  }
+
+  Future<void> _onAppleSignIn() async {
+    _showError("Apple Sign-In এখনো চালু হয়নি");
   }
 
   @override
@@ -97,7 +110,7 @@ class _SignInScreenState extends State<SignInScreen> {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            // 🔷 Header Section
+            // 🔷 Header
             Container(
               color: const Color(0xFF004E92),
               width: double.infinity,
@@ -123,7 +136,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
             ),
 
-            // 🔶 Form Section
+            // 🔶 Form
             Transform.translate(
               offset: const Offset(0, -40),
               child: Container(
@@ -166,16 +179,16 @@ class _SignInScreenState extends State<SignInScreen> {
                       // Email
                       TextFormField(
                         controller: _emailController,
-                        validator: (val) => val == null || val.isEmpty
-                            ? "Enter email"
-                            : null,
+                        validator: (val) =>
+                        val == null || val.isEmpty ? "Enter email" : null,
                         decoration: InputDecoration(
                           hintText: "Email",
                           prefixIcon: const Icon(Icons.email_outlined),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                          contentPadding:
+                          const EdgeInsets.symmetric(vertical: 15),
                         ),
                       ),
                       const SizedBox(height: 15),
@@ -184,22 +197,17 @@ class _SignInScreenState extends State<SignInScreen> {
                       TextFormField(
                         controller: _passwordController,
                         obscureText: _obscurePassword,
-                        validator: (val) => val == null || val.isEmpty
-                            ? "Enter password"
-                            : null,
+                        validator: (val) =>
+                        val == null || val.isEmpty ? "Enter password" : null,
                         decoration: InputDecoration(
                           hintText: "Password",
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                            ),
-                            onPressed: () {
-                              setState(() =>
-                              _obscurePassword = !_obscurePassword);
-                            },
+                            icon: Icon(_obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility),
+                            onPressed: () =>
+                                setState(() => _obscurePassword = !_obscurePassword),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -210,6 +218,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       const SizedBox(height: 10),
 
+                      // Remember + Forgot
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
