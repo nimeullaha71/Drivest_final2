@@ -5,41 +5,52 @@ import 'package:drivest_office/app/urls.dart';
 
 class AuthService {
   // ✅ Login
-  Future<bool> signIn({required String email, required String password}) async {
+  Future<bool> signIn({
+    required String email,
+    required String password,
+  }) async {
     try {
       final response = await http.post(
         Uri.parse(Urls.signInUrl),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"email": email, "password": password}),
+        body: jsonEncode({
+          "email": email,
+          "password": password,
+        }),
       );
 
-      print("Login Response: ${response.body}");
+      final data = jsonDecode(response.body);
+      print("🔹 Login Response: $data");
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final prefs = await SharedPreferences.getInstance();
 
-        // Correct token key
-        final token = data['accessToken'];
-        final refreshToken = data['refreshToken'];
-        final name = data['name'] ?? "Guest"; // optional
-        final userEmail = email;
-
-        if (token != null) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('token', token);
-          await prefs.setString('refreshToken', refreshToken ?? "");
-          await prefs.setString('name', name);
-          await prefs.setString('email', userEmail);
-
-          print("Token saved: $token"); // Debug
-
-          return true;
+        // Save token if exists
+        if (data['accessToken'] != null) {
+          await prefs.setString('token', data['accessToken']);
         }
+
+        // Check trial expired in response
+        if (data['trialExpired'] == true) {
+          throw Exception("TRIAL_EXPIRED"); // Your SignInScreen will handle this
+        }
+
+        return true; // Normal login
       }
-      return false;
+
+      // 🔹 If status code is 403 → trial expired / payment needed
+      if (response.statusCode == 403) {
+        final prefs = await SharedPreferences.getInstance();
+        if (data['accessToken'] != null) {
+          await prefs.setString('token', data['accessToken']);
+        }
+        throw Exception("TRIAL_EXPIRED"); // SignInScreen will navigate
+      }
+
+      throw Exception("LOGIN_FAILED: ${response.statusCode}");
     } catch (e) {
       print("Login Error: $e");
-      return false;
+      rethrow; // Let SignInScreen catch this and navigate
     }
   }
 

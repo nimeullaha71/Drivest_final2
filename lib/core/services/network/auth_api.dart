@@ -9,6 +9,58 @@ import '../../../home/model/car_model.dart';
 
 class ApiService {
 
+
+
+  Future<bool> signIn({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse(Urls.signInUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "email": email,
+          "password": password,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+      print("🔹 Login Response: $data");
+
+      if (response.statusCode == 200) {
+        final prefs = await SharedPreferences.getInstance();
+
+        // Save token if exists
+        if (data['accessToken'] != null) {
+          await prefs.setString('token', data['accessToken']);
+        }
+
+        // Check trial expired in response
+        if (data['trialExpired'] == true) {
+          throw Exception("TRIAL_EXPIRED"); // Your SignInScreen will handle this
+        }
+
+        return true; // Normal login
+      }
+
+      // 🔹 If status code is 403 → trial expired / payment needed
+      if (response.statusCode == 403) {
+        final prefs = await SharedPreferences.getInstance();
+        if (data['accessToken'] != null) {
+          await prefs.setString('token', data['accessToken']);
+        }
+        throw Exception("TRIAL_EXPIRED"); // SignInScreen will navigate
+      }
+
+      throw Exception("LOGIN_FAILED: ${response.statusCode}");
+    } catch (e) {
+      print("Login Error: $e");
+      rethrow; // Let SignInScreen catch this and navigate
+    }
+  }
+
+
   static Future<bool> registerUser({
     required String name,
     required String email,

@@ -191,7 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: 'Payment',
                       onTap: () {
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => PaymentScreen()));
+                            MaterialPageRoute(builder: (context) => PaymentPage()));
                       },
                     ),
                     const _TileDivider(),
