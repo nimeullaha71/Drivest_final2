@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> {
               return const SplashScreen();
             }
             if (snapshot.hasData && snapshot.data != null) {
-              return const MainBottomNavScreen();
+              return const SplashScreen();
             }
             return const SignInScreen();
           },
