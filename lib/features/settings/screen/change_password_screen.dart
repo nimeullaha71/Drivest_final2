@@ -4,7 +4,7 @@ import 'package:drivest_office/app/urls.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../home/pages/profile/about_us_page.dart';
+import '../../../home/pages/profile/refund_policy.dart';
 import '../../../home/widgets/profile_page_app_bar.dart';
 import '../../../main_bottom_nav_screen.dart';
 import '../../../home/pages/ai_chat_page.dart';

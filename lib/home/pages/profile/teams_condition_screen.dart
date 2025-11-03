@@ -36,7 +36,7 @@ class _TermsAndConditionScreenState extends State<TermsAndConditionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+                " These terms and conditions apply to the use of the Drivest app and all related services.",
                 style: TextStyle(
                   fontSize: 14,
                   color: Color(0xFF333333),
@@ -46,20 +46,19 @@ class _TermsAndConditionScreenState extends State<TermsAndConditionScreen> {
               const SizedBox(height: 16),
 
               _buildNumberedItem(
-                  1,
-                  "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing"),
+                  "1. Definitions - Drivest: provider of the app and related services. - User: any person using the app or making a purchase."),
               _buildNumberedItem(
-                  2,
-                  "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
+                  " 2. Acceptance By using the app, you agree to these terms and conditions."),
               _buildNumberedItem(
-                  3,
-                  "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing"),
+                  " 3. Services Drivest provides data, analytics, and information tools related to vehicle trading opportunities. Information is provided for support purposes and should not be considered financial advice."),
               _buildNumberedItem(
-                  4,
-                  "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
+                  "4. Payments All payments within the app are processed securely through our payment partners.Prices include VAT unless otherwise stated. By completing a payment, you also agree to thepayment provider’s conditions."),
               _buildNumberedItem(
-                  5,
-                  "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
+                  "5. Liability Drivest shall not be liable for any damages resulting from the use of the app or provided information. Users remain fully responsible for their buying and selling decisions."),
+              _buildNumberedItem(""
+                  "6. Intellectual Property All app content, logos, and data remain the intellectual property of Drivest.Copying or reproducing without written consent is prohibited."),
+              _buildNumberedItem(""
+                  " 7. Governing Law These terms are governed by Belgian law. Disputes shall be settled in the courtsof Antwerp, Belgium.")
             ],
           ),
         ),
@@ -77,20 +76,12 @@ class _TermsAndConditionScreenState extends State<TermsAndConditionScreen> {
     );
   }
 
-  Widget _buildNumberedItem(int number, String text) {
+  Widget _buildNumberedItem( String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "$number. ",
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
-            ),
-          ),
           Expanded(
             child: Text(
               text,

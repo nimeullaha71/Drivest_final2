@@ -1,4 +1,4 @@
-import 'package:drivest_office/home/pages/profile/about_us_page.dart';
+import 'package:drivest_office/home/pages/profile/refund_policy.dart';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
 import '../../../home/pages/ai_chat_page.dart';

@@ -2,7 +2,7 @@ import 'package:drivest_office/features/auth/screen/sign_in_screen.dart';
 import 'package:drivest_office/features/settings/screen/setting_screen.dart';
 import 'package:drivest_office/home/pages/payment_page.dart';
 import 'package:drivest_office/home/pages/profile/teams_condition_screen.dart';
-import 'package:drivest_office/home/pages/profile/about_us_page.dart';
+import 'package:drivest_office/home/pages/profile/refund_policy.dart';
 import 'package:drivest_office/home/pages/profile/help_&_feedback_page.dart';
 import 'package:drivest_office/home/pages/profile/my_profile_page.dart';
 import 'package:flutter/material.dart';
@@ -149,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const _TileDivider(),
                     _OptionTile(
                       icon: Icons.info_outline,
-                      title: 'About us',
+                      title: 'Refund Policy',
                       onTap: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) => AboutUsPage()));

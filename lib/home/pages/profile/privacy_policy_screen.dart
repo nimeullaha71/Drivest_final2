@@ -27,7 +27,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: DrivestAppBar(title: "Terms & Condition"),
+      appBar: DrivestAppBar(title: "Privacy Policy "),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: SingleChildScrollView(
@@ -36,7 +36,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+                " At Drivest, we value the protection of your personal data. This policy explains what information we collect, why we collect it, and how we protect it.",
                 style: TextStyle(
                   fontSize: 14,
                   color: Color(0xFF333333),
@@ -45,20 +45,19 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               ),
               const SizedBox(height: 16),
               _buildNumberedItem(
-                  1,
-                  "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing"),
+                  "1. Controller Drivest Email: drivestbelgium@gmail.com"),
               _buildNumberedItem(
-                  2,
-                  "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
+                  "2. Information we collect We may collect the following data when you use our app: - Name andcontact details (email, phone number) - Payment and billing information - App usage data (searchbehavior, preferences)"),
               _buildNumberedItem(
-                  3,
-                  "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing"),
+                  " 3. Purpose We use your data to: - Create and manage user accounts - Process payments andtransactions - Provide customer support and communication - Analyze app usage and improve ourservices"),
               _buildNumberedItem(
-                  4,
-                  "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
+                  " 4. Data sharing We only share personal data when necessary for: - Payment processing (viatrusted providers such as Stripe or Mollie) - Legal obligations"),
               _buildNumberedItem(
-                  5,
-                  "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
+                  " 5. Data retention We store personal data as long as necessary for the purposes stated or asrequired by law."),
+              _buildNumberedItem(
+                  "6. Security Drivest takes technical and organizational measures to protect your data from loss,misuse, or unauthorized access."),
+              _buildNumberedItem(
+                  "7. Your rights You have the right to access, correct, or delete your data. Contact us atdrivestbelgium@gmail.com for any request.")
             ],
           ),
         ),
@@ -76,25 +75,17 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
     );
   }
 
-  Widget _buildNumberedItem(int number, String text) {
+  Widget _buildNumberedItem( String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "$number. ",
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
-            ),
-          ),
           Expanded(
             child: Text(
               text,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 15,
                 color: Color(0xFF333333),
                 height: 1.4,
               ),

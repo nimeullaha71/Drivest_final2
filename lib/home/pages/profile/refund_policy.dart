@@ -94,7 +94,7 @@ class AboutUsPage extends StatelessWidget {
     int _selectedIndex = 4;
 
     return Scaffold(
-      appBar: DrivestAppBar(title: "About Us"),
+      appBar: DrivestAppBar(title: "Refund Policy"),
       body: Column(
         children: [
           Expanded(
@@ -104,37 +104,24 @@ class AboutUsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Lorem Ipsum is simply dummy text of the printing and typesetting industry...',
-                    style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400, color: Color.fromRGBO(51, 51, 51, 1)),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    '1. It has survived not only five centuries, but also the leap into electronic typesetting, '
-                        'remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing',
+                    ' 1. General Drivest aims for customer satisfaction. If you are not satisfied with a purchase or subscription, please contact us at drivestbelgium@gmail.com.',
                     style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400, color: Color.fromRGBO(51, 51, 51, 1)),
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    '2. Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+                    ' 2. Digital products and subscriptions - Purchases of digital content or subscriptions are generally non-refundable once access has been granted. - Exceptions may be made for technical issues or duplicate payments.',
                     style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400, color: Color.fromRGBO(51, 51, 51, 1)),
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    '3. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. '
-                        'It was popularised in the 1960s with the release of Letraset sheets containing',
+                    ' 3. Procedure To request a refund, send an email within 14 days of purchase including: - Full name User ID or transaction ID - Reason for request',
                     style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400, color: Color.fromRGBO(51, 51, 51, 1)),
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    '4. Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+                    ' After review, we will respond within 7 working days. If approved, the refund will be processed to your original payment method',
                     style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400, color: Color.fromRGBO(51, 51, 51, 1)),
                   ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    '5. Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-                    style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400, color: Color.fromRGBO(51, 51, 51, 1)),
-                  ),
-
                   const SizedBox(height: 16),
                 ],
               ),
