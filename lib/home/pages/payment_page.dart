@@ -1,3 +1,4 @@
+import 'package:drivest_office/main_bottom_nav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -44,9 +45,19 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               const SizedBox(height: 30),
             ElevatedButton(
+              // PaymentPage এর ElevatedButton এর onPressed
               onPressed: () async {
-                await SubscriptionService.createSubscription(context);
-              },
+                final url = await SubscriptionService.createSubscriptionUrl(token!);
+                if (url != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StripePaymentWebView(url: url),
+                    ),
+                  );
+                }
+              }
+              ,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF004E92),
                   padding: const EdgeInsets.symmetric(
@@ -72,23 +83,60 @@ class StripePaymentWebView extends StatelessWidget {
   final String url;
   const StripePaymentWebView({super.key, required this.url});
 
+  Future<void> _handlePaymentSuccess(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    // যদি token null হয়, তাহলে webhook verify করার পরেও redirect কাজ করবে না
+    if (token == null) {
+      print("⚠️ Token missing! Probably cleared during payment flow.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Reauthenticating...")),
+      );
+      // Try to reload or fetch token again if you can
+      // Example: await AuthService.refreshToken();
+    }
+
+    final isVerified = await SubscriptionService.verifyPayment(token ?? "");
+
+    if (isVerified) {
+      await prefs.setBool('isSubscribed', true); // Optional flag to remember
+      if (context.mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const MainBottomNavScreen()),
+              (route) => false,
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Payment verification failed")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(Uri.parse(url))
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageFinished: (pageUrl) {
-            if (pageUrl.contains("success")) {
+          onNavigationRequest: (NavigationRequest request) {
+            if (request.url.contains("success")) {
+              _handlePaymentSuccess(context);
+              return NavigationDecision.prevent;
+            } else if (request.url.contains("cancel")) {
+              Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Payment Successful")),
+                const SnackBar(content: Text("Payment Cancelled")),
               );
-              Navigator.pushReplacementNamed(context, '/home');
+              return NavigationDecision.prevent;
             }
+            return NavigationDecision.navigate;
           },
         ),
-      );
+      )
+      ..loadRequest(Uri.parse(url));
 
     return Scaffold(
       appBar: AppBar(title: const Text("Complete Payment")),
@@ -96,3 +144,4 @@ class StripePaymentWebView extends StatelessWidget {
     );
   }
 }
+

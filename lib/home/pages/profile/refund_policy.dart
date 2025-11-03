@@ -84,8 +84,8 @@ class CustomBottomNavBar extends StatelessWidget {
 }
 
 // About Us Page
-class AboutUsPage extends StatelessWidget {
-  const AboutUsPage({super.key});
+class RefundPolicy extends StatelessWidget {
+  const RefundPolicy({super.key});
 
   static const primary = Color(0xff015093);
 

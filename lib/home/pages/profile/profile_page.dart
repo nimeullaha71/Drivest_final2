@@ -152,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: 'Refund Policy',
                       onTap: () {
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => AboutUsPage()));
+                            MaterialPageRoute(builder: (context) => RefundPolicy()));
                       },
                     ),
                     const _TileDivider(),
