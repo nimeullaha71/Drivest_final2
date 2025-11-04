@@ -27,25 +27,26 @@ class SubscriptionService {
     // তোমার checkout URL generate করার existing logic এখানে থাকবে
   }
 
-  static Future<bool> verifyPayment(String token) async {
+  static Future<bool> verifyPayment(String token, String sessionId) async {
     try {
-      print("🔹 Verifying payment with token: $token");
+      print("🔹 Verifying payment with session_id: $sessionId");
       final response = await http.post(
-        Uri.parse(Urls.createWebHookUrlUrl),
+        Uri.parse(Urls.createStripeSessionUrl), // ✅ নতুন endpoint
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
+        body: jsonEncode({'session_id': sessionId}), // ✅ এখন session_id পাঠাচ্ছি
       );
 
       print("🔹 Verify response code: ${response.statusCode}");
       print("🔹 Verify response body: ${response.body}");
-
       return response.statusCode == 200;
     } catch (e) {
       print("Webhook verify error: $e");
       return false;
     }
   }
+
 
 }

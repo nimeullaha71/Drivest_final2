@@ -83,24 +83,14 @@ class StripePaymentWebView extends StatelessWidget {
   final String url;
   const StripePaymentWebView({super.key, required this.url});
 
-  Future<void> _handlePaymentSuccess(BuildContext context) async {
+  Future<void> _handlePaymentSuccess(BuildContext context, String sessionId) async {
     final prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
+    final token = prefs.getString('token');
 
-    // যদি token null হয়, তাহলে webhook verify করার পরেও redirect কাজ করবে না
-    if (token == null) {
-      print("⚠️ Token missing! Probably cleared during payment flow.");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Reauthenticating...")),
-      );
-      // Try to reload or fetch token again if you can
-      // Example: await AuthService.refreshToken();
-    }
-
-    final isVerified = await SubscriptionService.verifyPayment(token ?? "");
+    final isVerified = await SubscriptionService.verifyPayment(token ?? "", sessionId);
 
     if (isVerified) {
-      await prefs.setBool('isSubscribed', true); // Optional flag to remember
+      await prefs.setBool('isSubscribed', true);
       if (context.mounted) {
         Navigator.pushAndRemoveUntil(
           context,
@@ -115,6 +105,7 @@ class StripePaymentWebView extends StatelessWidget {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     final controller = WebViewController()
@@ -123,7 +114,15 @@ class StripePaymentWebView extends StatelessWidget {
         NavigationDelegate(
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.contains("success")) {
-              _handlePaymentSuccess(context);
+              final uri = Uri.parse(request.url);
+              final sessionId = uri.queryParameters["session_id"];
+              if (sessionId != null) {
+                _handlePaymentSuccess(context, sessionId);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Session ID missing")),
+                );
+              }
               return NavigationDecision.prevent;
             } else if (request.url.contains("cancel")) {
               Navigator.pop(context);
@@ -134,6 +133,7 @@ class StripePaymentWebView extends StatelessWidget {
             }
             return NavigationDecision.navigate;
           },
+
         ),
       )
       ..loadRequest(Uri.parse(url));
