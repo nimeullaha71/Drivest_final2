@@ -4,9 +4,22 @@ import '../controller/saved_car_controller.dart';
 import '../../widgets/car_card.dart';
 import 'package:drivest_office/main_bottom_nav_screen.dart';
 
-class SavedPage extends StatelessWidget {
-  final SavedCarController savedController = Get.find();
+class SavedPage extends StatefulWidget {
   static const primary = Color(0xff015093);
+
+  @override
+  State<SavedPage> createState() => _SavedPageState();
+}
+
+class _SavedPageState extends State<SavedPage> {
+  final SavedCarController savedController = Get.find();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    savedController.loadSavedCars();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +43,7 @@ class SavedPage extends StatelessWidget {
               height: 32,
               decoration: const BoxDecoration(
                   color: Color(0xffCCDCE9), shape: BoxShape.circle),
-              child: const Icon(Icons.arrow_back_ios_new, size: 18, color: primary),
+              child: const Icon(Icons.arrow_back_ios_new, size: 18, color: SavedPage.primary),
             ),
           ),
         ),
