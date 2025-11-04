@@ -1,3 +1,4 @@
+import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:drivest_office/main_bottom_nav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +29,7 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Subscribe to Continue")),
+      appBar: const DrivestAppBar(title: "Subscribe to Continue"),
       body: Center(
         child: token == null
             ? const CircularProgressIndicator()

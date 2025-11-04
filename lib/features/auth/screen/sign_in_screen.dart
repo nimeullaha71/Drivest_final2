@@ -50,7 +50,7 @@ class _SignInScreenState extends State<SignInScreen> {
         if (!mounted) return;
         // Use microtask to ensure navigation after build
         Future.microtask(() {
-          Navigator.pushReplacement(
+          Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const PaymentPage()),
           );
