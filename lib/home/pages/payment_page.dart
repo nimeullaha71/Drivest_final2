@@ -49,6 +49,8 @@ class _PaymentPageState extends State<PaymentPage> {
               // PaymentPage এর ElevatedButton এর onPressed
               onPressed: () async {
                 final url = await SubscriptionService.createSubscriptionUrl(token!);
+
+                print("Payment Url SHow  here : $url");
                 if (url != null) {
                   Navigator.push(
                     context,

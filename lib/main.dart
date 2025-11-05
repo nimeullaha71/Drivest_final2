@@ -11,6 +11,7 @@ void main() {
   Get.put(SavedCarController());
 
   // 🔹 তারপর MultiProvider দিয়ে runApp করো
+  Get.put(SavedCarController(), permanent: true);
   runApp(
     MultiProvider(
       providers: [

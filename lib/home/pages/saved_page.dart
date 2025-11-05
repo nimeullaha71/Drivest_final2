@@ -16,7 +16,6 @@ class _SavedPageState extends State<SavedPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     savedController.loadSavedCars();
   }
