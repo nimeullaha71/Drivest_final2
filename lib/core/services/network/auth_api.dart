@@ -3,13 +3,10 @@ import 'dart:io';
 import 'package:drivest_office/app/urls.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../home/combined_home_page.dart';
 import '../../../home/model/car_model.dart';
 
 class ApiService {
-
-
 
   Future<bool> signIn({
     required String email,
@@ -243,7 +240,7 @@ class ApiService {
   static Future<CarModel> fetchCarDetails(String carId) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
-    final url = Uri.parse('$baseUrl/user/cars-details/$carId');
+    final url = Uri.parse(Urls.carDetailsUrl(carId));
 
     final response = await http.get(
       url,

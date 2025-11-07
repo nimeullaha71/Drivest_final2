@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="drivest_office"
+        android:label="Drivest"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
