@@ -69,10 +69,7 @@ class _TopBrandsPageState extends State<TopBrandsPage> {
                       imageUrl: brand.image,
                       brandId: brand.id,
                       onTap: (id) {
-                        // Brand tap হলে কি হবে সেটা handle করো
                         print("Tapped brand id: $id");
-
-                        // উদাহরণ: FilteredCarPage navigate
                         final filters = {
                           'brand': brand.name,
                           'fuelType': null,

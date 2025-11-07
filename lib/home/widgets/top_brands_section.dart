@@ -85,7 +85,6 @@ class _TopBrandsSectionState extends State<TopBrandsSection> {
                     brandId: brand.id,
                     onTap: (id) {
                       debugPrint("🟢 Brand tapped: $id");
-                      // Map তৈরি করা আগের filter + brandId update
                       final filters = {
                         'brand': brand.name,
                         'fuelType': null,

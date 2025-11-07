@@ -11,7 +11,6 @@ class AiChatPage extends StatefulWidget {
 class _AiChatPageState extends State<AiChatPage> {
   static const primary = Color(0xff015093);
   static const pageBg  = Color(0xffF3F5F7);
-  static const inBg    = Color(0xffE9EDF2);
   final TextEditingController _input = TextEditingController();
 
   final _messages = <_Msg>[

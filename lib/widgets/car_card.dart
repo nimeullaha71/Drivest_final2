@@ -17,7 +17,7 @@ class CarCard extends StatelessWidget {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      clipBehavior: Clip.antiAlias, // prevent overflow
+      clipBehavior: Clip.antiAlias,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -66,7 +66,6 @@ class CarCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // ❤️ Favorite button
                 Positioned(
                   top: 12,
                   right: 8,

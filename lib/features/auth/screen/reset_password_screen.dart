@@ -51,7 +51,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       setState(() => _isResetting = false);
 
       if (response['message'] == "Password reset successful") {
-        // Password reset successful
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

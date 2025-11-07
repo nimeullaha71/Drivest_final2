@@ -26,37 +26,34 @@ class ApiService {
       );
 
       final data = jsonDecode(response.body);
-      print("🔹 Login Response: $data");
+      print("Login Response: $data");
 
       if (response.statusCode == 200) {
         final prefs = await SharedPreferences.getInstance();
 
-        // Save token if exists
         if (data['accessToken'] != null) {
           await prefs.setString('token', data['accessToken']);
         }
 
-        // Check trial expired in response
         if (data['trialExpired'] == true) {
-          throw Exception("TRIAL_EXPIRED"); // Your SignInScreen will handle this
+          throw Exception("TRIAL_EXPIRED");
         }
 
-        return true; // Normal login
+        return true;
       }
 
-      // 🔹 If status code is 403 → trial expired / payment needed
       if (response.statusCode == 403) {
         final prefs = await SharedPreferences.getInstance();
         if (data['accessToken'] != null) {
           await prefs.setString('token', data['accessToken']);
         }
-        throw Exception("TRIAL_EXPIRED"); // SignInScreen will navigate
+        throw Exception("TRIAL_EXPIRED");
       }
 
       throw Exception("LOGIN_FAILED: ${response.statusCode}");
     } catch (e) {
       print("Login Error: $e");
-      rethrow; // Let SignInScreen catch this and navigate
+      rethrow;
     }
   }
 
@@ -72,7 +69,6 @@ class ApiService {
         Uri.parse(Urls.signUpUrl),
         headers: {
           "Content-Type": "application/json",
-          // "Authorization": "Bearer $token",
         },
         body: jsonEncode({
           "name": name,
@@ -168,33 +164,32 @@ class ApiService {
     }
   }
 
-// ApiService.dart এ এই METHOD ADD/REPLACE করুন:
   static Future<Map<String, dynamic>?> getUserProfileWithToken() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
-      print("🔥 Token: $token"); // ✅ DEBUG
+      print("🔥 Token: $token");
 
       if (token == null || token.isEmpty) {
         print("❌ No Token Found!");
         return null;
       }
 
-      final response = await http.get( // ✅ GET method
+      final response = await http.get(
         Uri.parse(Urls.userProfileUrl),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token', // ✅ Bearer Token
+          'Authorization': 'Bearer $token',
         },
       );
 
-      print("🔥 Profile API Response: ${response.statusCode}"); // ✅ DEBUG
-      print("🔥 Profile API Body: ${response.body}"); // ✅ DEBUG
+      print("🔥 Profile API Response: ${response.statusCode}");
+      print("🔥 Profile API Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final user = data['user'] ?? data; // ✅ Flexible response
-        print("✅ User Data: $user"); // ✅ DEBUG
+        final user = data['user'] ?? data;
+        print("✅ User Data: $user");
         return user;
       } else {
         print("❌ Profile API Error: ${response.statusCode}");
@@ -209,27 +204,24 @@ class ApiService {
   static Future<bool> updateUserProfile(Map<String, dynamic> data, {File? imageFile}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token'); // যদি তোমার API তে token লাগে
+      final token = prefs.getString('token');
 
       var request = http.MultipartRequest(
-        'PUT', // বা 'PUT' যদি তোমার API তে PUT লাগে
+        'PUT',
         Uri.parse(Urls.editProfileUrl),
       );
 
-      // 🔹 normal text fields যোগ করো
       data.forEach((key, value) {
         request.fields[key] = value.toString();
       });
 
-      // 🔹 image file থাকলে সেটাও যোগ করো
       if (imageFile != null) {
         request.files.add(await http.MultipartFile.fromPath(
-          'image', // <-- API তে যে key লাগে সেটা দাও
+          'image',
           imageFile.path,
         ));
       }
 
-      // 🔹 Authorization থাকলে header এ যোগ করো
       if (token != null && token.isNotEmpty) {
         request.headers['Authorization'] = 'Bearer $token';
       }
@@ -250,7 +242,7 @@ class ApiService {
 
   static Future<CarModel> fetchCarDetails(String carId) async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token') ?? ''; // user token
+    final token = prefs.getString('token') ?? '';
     final url = Uri.parse('$baseUrl/user/cars-details/$carId');
 
     final response = await http.get(

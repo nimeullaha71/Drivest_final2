@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:drivest_office/app/urls.dart';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,9 +26,7 @@ class _HelpAndFeedbackPageState extends State<HelpAndFeedbackPage> {
 
   bool _isSubmitting = false;
 
-  static const primary = Color(0xff015093);
 
-  // API call
   Future<void> _onSubmit() async {
     final email = _emailController.text.trim();
     final phone = _phoneController.text.trim();
@@ -51,7 +50,7 @@ class _HelpAndFeedbackPageState extends State<HelpAndFeedbackPage> {
       final token = prefs.getString('token') ?? '';
       print("TOKEN: $token");
 
-      final url = Uri.parse('https://ai-car-app-sandy.vercel.app/user/create-ticket');
+      final url = Uri.parse(Urls.ticketUrl);
       final response = await http.post(
         url,
         headers: {
@@ -86,11 +85,6 @@ class _HelpAndFeedbackPageState extends State<HelpAndFeedbackPage> {
     }
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

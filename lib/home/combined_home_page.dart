@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'widgets/top_appbar.dart';
 import 'widgets/condition_selector.dart';
 import 'widgets/search_and_filter.dart';

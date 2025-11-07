@@ -28,12 +28,10 @@ class _FilterPageState extends State<FilterPage> {
   final List<String> conditions = ['Excellent', 'Good', 'Needs Repair'];
   final List<String> locations = ['Belgium', 'Canada', 'South Korea'];
 
-  // Mandatory fields
   String? selectedBrand = 'Toyota';
   String? selectedFuelType = 'Diesel';
 
-  // Optional fields
-  String? selectedCarType; // initially unselected
+  String? selectedCarType;
   String? selectedCondition;
   String? selectedLocation;
 
@@ -152,12 +150,10 @@ class _FilterPageState extends State<FilterPage> {
           onSelected: (_) {
             setState(() {
               if (isMandatory) {
-                // mandatory fields always select something
                 onSelected(option);
               } else {
-                // optional fields → tap again to deselect
                 if (isSelected) {
-                  onSelected(null); // deselect
+                  onSelected(null);
                 } else {
                   onSelected(option);
                 }

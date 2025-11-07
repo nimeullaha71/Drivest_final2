@@ -13,7 +13,6 @@ class CompareResultPage extends StatelessWidget {
     const panel = Color(0xffEAF3FF);
     const labelChip = Color(0xffD7E7F6);
 
-    // API থেকে আসা data অনুযায়ী carA, carB
     final carA = selectedCars[0];
     final carB = selectedCars[1];
 
@@ -132,7 +131,7 @@ class CompareResultPage extends StatelessWidget {
 }
 
 class _CarHeaderTile extends StatelessWidget {
-  final Map<String, dynamic> car;  // <-- এখানে Map ব্যবহার
+  final Map<String, dynamic> car;
   final bool alignRight;
   const _CarHeaderTile({required this.car, this.alignRight = false});
 

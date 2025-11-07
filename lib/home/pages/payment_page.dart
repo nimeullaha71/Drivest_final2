@@ -3,7 +3,7 @@ import 'package:drivest_office/main_bottom_nav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import '../../core/services/network/subscription_service.dart'; // only works on web
+import '../../core/services/network/subscription_service.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key});
@@ -46,7 +46,6 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               const SizedBox(height: 30),
             ElevatedButton(
-              // PaymentPage এর ElevatedButton এর onPressed
               onPressed: () async {
                 final url = await SubscriptionService.createSubscriptionUrl(token!);
 

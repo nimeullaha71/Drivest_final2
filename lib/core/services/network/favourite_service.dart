@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../home/model/car_model.dart';
 
 class FavoriteService {
-  // ✅ Add to favourites
   static Future<Map<String, dynamic>> favoriteCar(String carId) async {
     try {
       final token = await _getToken();
@@ -30,7 +29,6 @@ class FavoriteService {
     }
   }
 
-  // ✅ Remove from favourites
   static Future<Map<String, dynamic>> unfavoriteCar(String carId) async {
     try {
       final token = await _getToken();
@@ -54,7 +52,6 @@ class FavoriteService {
     }
   }
 
-  // ✅ Get saved cars list
   static Future<List<CarModel>> getSavedCars() async {
     try {
       final token = await _getToken();

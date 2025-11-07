@@ -15,7 +15,6 @@ class _TopAppBarState extends State<TopAppBar> {
   @override
   void initState() {
     super.initState();
-    // ✅ Auto load API data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserProvider>(context, listen: false).fetchUserProfile();
     });

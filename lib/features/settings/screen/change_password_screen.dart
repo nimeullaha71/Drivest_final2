@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:drivest_office/app/urls.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -57,7 +56,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? "";
 
-      // API call to update password
       final response = await http.put(
         Uri.parse(Urls.changePassUrl),
         headers: {
@@ -98,12 +96,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
       );
   }
-
-  // void _showSnackBar(String message, Color color) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(content: Text(message), backgroundColor: color),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {

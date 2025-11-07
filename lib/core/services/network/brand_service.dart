@@ -12,7 +12,7 @@ class BrandService {
       url,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer $token", // token পাঠানো
+        "Authorization": "Bearer $token",
       },
     );
 

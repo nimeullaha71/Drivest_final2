@@ -1,4 +1,3 @@
-import 'package:drivest_office/features/onBoarding/ui/screen/on_boarding_screen_one.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -17,8 +16,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _isLoading = true;
-  bool _isLoggedIn = false;
 
   @override
   void initState() {
@@ -30,17 +27,15 @@ class _MyAppState extends State<MyApp> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     setState(() {
-      _isLoggedIn = token != null && token.isNotEmpty;
-      _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-         // ✅ এটা ADD
+
         providers: [
-          ChangeNotifierProvider(create: (_) => UserProvider()), // ✅ এটা ADD
+          ChangeNotifierProvider(create: (_) => UserProvider()),
         ],
       child: GetMaterialApp(
         title: 'Drivest',

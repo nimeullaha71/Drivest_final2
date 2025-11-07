@@ -7,17 +7,14 @@ import 'core/services/network/user_provider.dart';
 import 'home/controller/saved_car_controller.dart';
 
 void main() {
-  // 🔹 প্রথমে GetX controller inject করো
   Get.put(SavedCarController());
 
-  // 🔹 তারপর MultiProvider দিয়ে runApp করো
   Get.put(SavedCarController(), permanent: true);
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CarProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        // আরো provider থাকলে এখানে দাও
       ],
       child: const MyApp(),
     ),

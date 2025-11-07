@@ -48,7 +48,6 @@ class _SignInScreenState extends State<SignInScreen> {
     } catch (e) {
       if (e.toString().contains("TRIAL_EXPIRED")) {
         if (!mounted) return;
-        // Use microtask to ensure navigation after build
         Future.microtask(() {
           Navigator.push(
             context,
@@ -94,11 +93,11 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Future<void> _onGoogleSignIn() async {
-    _showError("Google Sign-In এখনো চালু হয়নি");
+    _showError("Google Sign-In is not available ");
   }
 
   Future<void> _onAppleSignIn() async {
-    _showError("Apple Sign-In এখনো চালু হয়নি");
+    _showError("Apple Sign-In is not available");
   }
 
   @override
@@ -108,7 +107,6 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
       body: Column(
         children: [
-          // 🔷 Header
           Container(
             color: const Color(0xFF004E92),
             width: double.infinity,
@@ -134,7 +132,6 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
           ),
 
-          // 🔶 Form
           Transform.translate(
             offset: const Offset(0, -40),
             child: Container(
@@ -174,7 +171,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Email
                     TextFormField(
                       controller: _emailController,
                       validator: (val) =>
@@ -191,7 +187,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 15),
 
-                    // Password
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
@@ -216,7 +211,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 10),
 
-                    // Remember + Forgot
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -242,7 +236,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 15),
 
-                    // Sign in button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -268,7 +261,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 15),
 
-                    // Google Sign-In
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
@@ -286,7 +278,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 10),
 
-                    // Apple Sign-In
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
@@ -304,7 +295,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Sign up
                     GestureDetector(
                       onTap: _onSignUp,
                       child: const Text.rich(

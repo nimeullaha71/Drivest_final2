@@ -38,7 +38,6 @@ class _OnBoardingScreenOneState extends State<OnBoardingScreenOne> {
               children: [
                 SizedBox(height: size.height * 0.05),
 
-                // Logo Section
                 SizedBox(
                   height: size.height * 0.35,
                   child: Center(

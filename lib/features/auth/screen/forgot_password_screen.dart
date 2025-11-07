@@ -27,7 +27,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           height: size.height,
           child: Stack(
             children: [
-              // 🔹 Top Blue Background with Logo
               Container(
                 color: const Color(0xFF004E92),
                 width: double.infinity,
@@ -54,7 +53,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
 
-              // 🔹 White Card Section (Form)
               Positioned(
                 top: size.height * 0.40,
                 left: 16,
@@ -96,7 +94,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // 🔹 Email Input
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -121,7 +118,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                         const SizedBox(height: 20),
 
-                        // 🔹 Send Code Button
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -137,7 +133,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               if (_formKey.currentState!.validate()) {
                                 final email = _emailController.text.trim();
 
-                                // 🔹 Show loading dialog
                                 showDialog(
                                   context: context,
                                   useRootNavigator: true,
@@ -154,7 +149,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                                   print("Forgot password response: $response");
 
-                                  // ✅ FIXED CONDITION BELOW
                                   final isOtpSent = response['message']
                                       ?.toString()
                                       .toLowerCase()
@@ -162,13 +156,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                       false;
 
                                   if (isOtpSent) {
-                                    // 🔹 Show success message
                                     if (mounted) {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(content: Text(response['message'] ?? 'OTP sent!')),
                                       );
 
-                                      // 🔹 Navigate to VerifyForgotPasswordOtpScreen
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -178,7 +170,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                       );
                                     }
                                   } else {
-                                    // 🔹 Show failure message
                                     if (mounted) {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(content: Text(response['message'] ?? 'Failed to send OTP')),

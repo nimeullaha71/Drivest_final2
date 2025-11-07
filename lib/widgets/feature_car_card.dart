@@ -126,7 +126,6 @@ class FeatureCarCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // title + price
                 Row(
                   children: [
                     Expanded(

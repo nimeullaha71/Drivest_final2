@@ -1,4 +1,3 @@
-import 'package:drivest_office/app/urls.dart';
 import 'package:drivest_office/features/auth/screen/sign_in_screen.dart';
 import 'package:drivest_office/core/services/network/auth_api.dart';
 import 'package:email_validator/email_validator.dart';
@@ -79,7 +78,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       resizeToAvoidBottomInset: true,
       body: Column(
         children: [
-          // 🔹 Top Blue Section
           Container(
             color: const Color(0xFF004E92),
             width: double.infinity,
@@ -105,7 +103,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
 
-          // 🔹 White Form Section
           Transform.translate(
             offset: const Offset(0, -40),
             child: Container(
@@ -153,7 +150,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    // 🔸 Name
                     TextFormField(
                       controller: _fullNameController,
                       decoration: _inputDecoration("Full Name"),
@@ -166,7 +162,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // 🔸 Email
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -180,7 +175,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // 🔸 Phone
                     TextFormField(
                       controller: _numberController,
                       decoration: _inputDecoration("Phone Number"),
@@ -193,7 +187,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // 🔸 Password
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
@@ -220,7 +213,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // 🔸 Submit Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(

@@ -7,11 +7,9 @@ import '../../../home/model/car_model.dart';
 class CarService {
   static Future<List<CarModel>> fetchFeaturedCars() async {
     try {
-      // 🔹 Get saved token from SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
-      // 🔹 Send GET request with Authorization header
       final response = await http.get(
         Uri.parse(Urls.carsUrl),
         headers: {

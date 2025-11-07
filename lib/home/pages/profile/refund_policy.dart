@@ -83,7 +83,6 @@ class CustomBottomNavBar extends StatelessWidget {
   }
 }
 
-// About Us Page
 class RefundPolicy extends StatelessWidget {
   const RefundPolicy({super.key});
 

@@ -17,11 +17,6 @@ class TermsAndConditionScreen extends StatefulWidget {
 class _TermsAndConditionScreenState extends State<TermsAndConditionScreen> {
   int _selectedIndex = 4;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

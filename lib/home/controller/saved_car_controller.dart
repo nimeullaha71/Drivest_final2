@@ -9,14 +9,13 @@ class SavedCarController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadSavedCars(); // Controller তৈরি হলে fetch করবে
+    loadSavedCars();
   }
 
-  // ✅ Load all saved cars from API
   Future<void> loadSavedCars() async {
     try {
-      final cars = await FavoriteService.getSavedCars(); // GET API
-      savedCars.assignAll(cars); // RxList auto update
+      final cars = await FavoriteService.getSavedCars();
+      savedCars.assignAll(cars);
     } catch (e) {
       print("❌ Failed to load saved cars: $e");
       Get.snackbar(
@@ -29,18 +28,15 @@ class SavedCarController extends GetxController {
     }
   }
 
-  // ✅ Toggle favourite add/remove
   Future<void> toggleSave(CarModel car) async {
     final alreadySaved = savedCars.any((c) => c.id == car.id);
 
-    // UI instant update
     if (alreadySaved) {
       savedCars.removeWhere((c) => c.id == car.id);
     } else {
       savedCars.add(car);
     }
 
-    // API call
     try {
       final result = alreadySaved
           ? await FavoriteService.unfavoriteCar(car.id)
@@ -50,7 +46,6 @@ class SavedCarController extends GetxController {
       final message = result['message'] ?? (success ? 'Done' : 'Failed');
 
       if (!success) {
-        // Revert UI if API failed
         if (alreadySaved) {
           savedCars.add(car);
         } else {
@@ -65,7 +60,6 @@ class SavedCarController extends GetxController {
           colorText: Colors.orange.shade800,
         );
       } else {
-        // Show success snackbar
         Get.snackbar(
           alreadySaved ? "Removed from favourites" : "Added to favourites",
           message,
@@ -76,7 +70,6 @@ class SavedCarController extends GetxController {
       }
     } catch (e) {
       print("❌ Favourite toggle error: $e");
-      // Revert UI
       if (alreadySaved) {
         savedCars.add(car);
       } else {

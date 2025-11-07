@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
-
 import '../../../core/services/network/user_provider.dart';
 import '../../widgets/profile_page_app_bar.dart';
 import '../profile/my_profile_page.dart';
@@ -94,7 +93,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       phone: numberController.text.trim(),
       dob: dobController.text.trim(),
       address: addressController.text.trim(),
-      imageFile: _image, // এখন image ও যাবে form-data তে
+      imageFile: _image,
     );
 
     if (success) {
@@ -124,7 +123,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: const DrivestAppBar(title: "Edit Profile"),
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
-          // 🔹 API থেকে আসা profile image
           String? profileImageUrlRaw = userProvider.userData?['image'];
           final profileImageUrl = (profileImageUrlRaw != null && profileImageUrlRaw.isNotEmpty)
               ? (profileImageUrlRaw.startsWith('http')
@@ -175,14 +173,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ),
                       Positioned(
-                        bottom: 0, // image-এর border এর একদম নিচে বসবে
-                        right: 0,  // ডানদিকে border line touch করবে
+                        bottom: 0,
+                        right: 0,
                         child: Container(
-                          width: imageSize * 0.30, // icon এর size responsive
+                          width: imageSize * 0.30,
                           height: imageSize * 0.30,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white, // ছোট সাদা border effect এর জন্য
+                            color: Colors.white,
                             border: Border.all(color: Colors.grey.shade300, width: 2),
                           ),
                           child: Container(

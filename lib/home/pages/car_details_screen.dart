@@ -48,7 +48,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ✅ Car Image from API
                   if (car.imageUrl.isNotEmpty)
                     Image.network(
                       car.imageUrl,
@@ -62,7 +61,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
                   const SizedBox(height: 16),
 
-                  // ✅ Title + Description
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
@@ -101,7 +99,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
                   const SizedBox(height: 20),
 
-                  // ✅ Features Section
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: const Text(
@@ -129,7 +126,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
                   const SizedBox(height: 20),
 
-                  // ✅ AI Trade Analysis Button
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: SizedBox(
@@ -213,7 +209,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
                   const SizedBox(height: 24),
 
-                  // ✅ Price & Suggestion Button
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(

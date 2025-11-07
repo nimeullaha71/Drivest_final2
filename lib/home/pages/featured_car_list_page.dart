@@ -26,7 +26,7 @@ class FeaturedCarListPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: FutureBuilder<List<CarModel>>(
-          future: CarService.fetchFeaturedCars(), // ✅ API থেকে ডাটা আনবে
+          future: CarService.fetchFeaturedCars(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());

@@ -10,7 +10,6 @@ class UserProvider extends ChangeNotifier {
   Map<String, dynamic>? get userData => _userData;
   bool get isLoading => _isLoading;
 
-  // load from SharedPreferences (used at app start)
   Future<void> loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     _userData = {
@@ -20,12 +19,10 @@ class UserProvider extends ChangeNotifier {
       'dob': prefs.getString('user_dob') ?? '',
       'address': prefs.getString('user_address') ?? '',
       'profile_image': prefs.getString('user_image') ?? '',
-      // image, status etc. can be added if needed
     };
     notifyListeners();
   }
 
-  // fetch fresh profile from API (keeps shared prefs in sync)
   Future<void> fetchUserProfile() async {
     print("UserProvider: Starting fetch...");
     _isLoading = true;
@@ -52,13 +49,12 @@ class UserProvider extends ChangeNotifier {
     print("UserProvider: Fetch complete! Data: $_userData");
   }
 
-  // Update profile: calls API, updates local userData + SharedPreferences, notifies listeners
   Future<bool> updateUserProfile({
     required String name,
     required String phone,
     required String dob,
     required String address,
-    File? imageFile, // <-- পরিবর্তন ১: File টাইপ image গ্রহণ করবে
+    File? imageFile,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -74,7 +70,6 @@ class UserProvider extends ChangeNotifier {
       'email': email,
     };
 
-    // 🔹 date ফরম্যাট ঠিক করো
     if (updatedData['dob'].contains('/') && updatedData['dob'].split('/').length == 3) {
       List<String> parts = updatedData['dob'].split('/');
       try {
@@ -85,12 +80,10 @@ class UserProvider extends ChangeNotifier {
       }
     }
 
-    // 🔹 ApiService কল করো
     final bool success =
     await ApiService.updateUserProfile(updatedData, imageFile: imageFile);
 
     if (success) {
-      // local update
       _userData ??= {};
       _userData!['name'] = name;
       _userData!['phone'] = phone;

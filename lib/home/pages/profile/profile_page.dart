@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/services/network/user_provider.dart';
 import '../../../main_bottom_nav_screen.dart';
-import 'invoice_screen.dart';
 import 'privacy_policy_screen.dart';
 import '../../../features/auth/services/auth_service.dart';
 
@@ -21,7 +20,6 @@ const _textDark = Color(0xff1F2937);
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
-  static const _selectedIndex = 4;
   static const primary = Color(0xff015093);
 
   @override
