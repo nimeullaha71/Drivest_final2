@@ -14,8 +14,7 @@ class TopBrandsSection extends StatefulWidget {
 }
 
 class _TopBrandsSectionState extends State<TopBrandsSection> {
-  late Future<List<BrandModel>> _brandsFuture;
-
+  Future<List<BrandModel>>? _brandsFuture;
   @override
   void initState() {
     super.initState();
@@ -47,7 +46,10 @@ class _TopBrandsSectionState extends State<TopBrandsSection> {
             const Spacer(),
             TextButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>TopBrandsPage()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TopBrandsPage()),
+                );
               },
               child: const Text(
                 "view all",
@@ -61,9 +63,13 @@ class _TopBrandsSectionState extends State<TopBrandsSection> {
           ],
         ),
         const SizedBox(height: 12),
+
+        // ✅ Null check added
         SizedBox(
           height: 80,
-          child: FutureBuilder<List<BrandModel>>(
+          child: _brandsFuture == null
+              ? const Center(child: CircularProgressIndicator())
+              : FutureBuilder<List<BrandModel>>(
             future: _brandsFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -100,7 +106,8 @@ class _TopBrandsSectionState extends State<TopBrandsSection> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => FilteredCarPage(filters: filters),
+                          builder: (context) =>
+                              FilteredCarPage(filters: filters),
                         ),
                       );
                     },
@@ -114,3 +121,4 @@ class _TopBrandsSectionState extends State<TopBrandsSection> {
     );
   }
 }
+
