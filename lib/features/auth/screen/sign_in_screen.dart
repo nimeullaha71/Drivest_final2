@@ -1,8 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:drivest_office/features/auth/screen/sign_up_screen.dart';
+import 'package:drivest_office/features/auth/services/google_auth_service.dart';
 import 'package:drivest_office/main_bottom_nav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../app/asset_paths.dart';
 import '../../../home/pages/payment_page.dart';
 import '../services/auth_service.dart';
@@ -20,11 +25,14 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+
   bool _rememberMe = false;
   bool _obscurePassword = true;
   bool _isLoading = false;
 
   final AuthService _authService = AuthService();
+  final GoogleAuthService _googleAuthService = GoogleAuthService();
+
 
   Future<void> _onSignIn() async {
     if (!_formKey.currentState!.validate()) return;
@@ -93,8 +101,9 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Future<void> _onGoogleSignIn() async {
-    _showError("Google Sign-In is not available ");
+    await _googleAuthService.signInWithGoogle(context);
   }
+
 
   Future<void> _onAppleSignIn() async {
     _showError("Apple Sign-In is not available");
