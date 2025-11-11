@@ -45,25 +45,28 @@ class _PaymentPageState extends State<PaymentPage> {
                     fontSize: 18, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () async {
-                final url = await SubscriptionService.createSubscriptionUrl(token!);
+              ElevatedButton(
+                onPressed: () async {
+                  final url = await SubscriptionService.createSubscriptionUrl(token!);
 
-                print("Payment Url SHow  here : $url");
-                if (url != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => StripePaymentWebView(url: url),
-                    ),
-                  );
-                }
-              }
-              ,
+                  print("🔗 Payment URL: $url");
+
+                  if (url != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StripePaymentWebView(url: url),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Failed to create payment session.")),
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF004E92),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30, vertical: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -85,28 +88,19 @@ class StripePaymentWebView extends StatelessWidget {
   final String url;
   const StripePaymentWebView({super.key, required this.url});
 
-  Future<void> _handlePaymentSuccess(BuildContext context, String sessionId) async {
+  // ✅ Success হলে সরাসরি home screen এ পাঠাবে
+  Future<void> _handlePaymentSuccess(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+    await prefs.setBool('isSubscribed', true);
 
-    final isVerified = await SubscriptionService.verifyPayment(token ?? "", sessionId);
-
-    if (isVerified) {
-      await prefs.setBool('isSubscribed', true);
-      if (context.mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const MainBottomNavScreen()),
-              (route) => false,
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Payment verification failed")),
+    if (context.mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const MainBottomNavScreen()),
+            (route) => false,
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -116,15 +110,7 @@ class StripePaymentWebView extends StatelessWidget {
         NavigationDelegate(
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.contains("success")) {
-              final uri = Uri.parse(request.url);
-              final sessionId = uri.queryParameters["session_id"];
-              if (sessionId != null) {
-                _handlePaymentSuccess(context, sessionId);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Session ID missing")),
-                );
-              }
+              _handlePaymentSuccess(context);
               return NavigationDecision.prevent;
             } else if (request.url.contains("cancel")) {
               Navigator.pop(context);
@@ -135,7 +121,6 @@ class StripePaymentWebView extends StatelessWidget {
             }
             return NavigationDecision.navigate;
           },
-
         ),
       )
       ..loadRequest(Uri.parse(url));
@@ -146,4 +131,3 @@ class StripePaymentWebView extends StatelessWidget {
     );
   }
 }
-
