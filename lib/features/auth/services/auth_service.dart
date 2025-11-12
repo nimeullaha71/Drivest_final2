@@ -7,6 +7,7 @@ class AuthService {
   Future<bool> signIn({
     required String email,
     required String password,
+    bool remember = false,
   }) async {
     try {
       final response = await http.post(

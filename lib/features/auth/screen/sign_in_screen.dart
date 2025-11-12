@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:drivest_office/app/asset_paths.dart';
 import 'package:drivest_office/features/auth/screen/sign_up_screen.dart';
+import 'package:drivest_office/features/auth/services/auth_service.dart';
 import 'package:drivest_office/features/auth/services/google_auth_service.dart';
+import 'package:drivest_office/home/pages/payment_page.dart';
 import 'package:drivest_office/main_bottom_nav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../app/asset_paths.dart';
-import '../../../home/pages/payment_page.dart';
 import '../services/auth_service.dart';
 import 'forgot_password_screen.dart';
 
@@ -25,7 +25,6 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-
   bool _rememberMe = false;
   bool _obscurePassword = true;
   bool _isLoading = false;
@@ -33,7 +32,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final AuthService _authService = AuthService();
   final GoogleAuthService _googleAuthService = GoogleAuthService();
 
-
+  // 🔹 Sign In Function with Remember Me support
   Future<void> _onSignIn() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -43,6 +42,7 @@ class _SignInScreenState extends State<SignInScreen> {
       bool success = await _authService.signIn(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
+        remember: _rememberMe, // ✅ Pass remember flag to AuthService
       );
 
       if (!mounted) return;
@@ -65,8 +65,7 @@ class _SignInScreenState extends State<SignInScreen> {
       } else {
         _showError("Invalid email or password");
       }
-    }
-    finally {
+    } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
@@ -104,7 +103,6 @@ class _SignInScreenState extends State<SignInScreen> {
     await _googleAuthService.signInWithGoogle(context);
   }
 
-
   Future<void> _onAppleSignIn() async {
     _showError("Apple Sign-In is not available");
   }
@@ -116,6 +114,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
       body: Column(
         children: [
+          // 🔹 Top Header Section
           Container(
             color: const Color(0xFF004E92),
             width: double.infinity,
@@ -141,6 +140,7 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
           ),
 
+          // 🔹 Login Form Section
           Transform.translate(
             offset: const Offset(0, -40),
             child: Container(
@@ -180,6 +180,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 20),
 
+                    // 🔹 Email Field
                     TextFormField(
                       controller: _emailController,
                       validator: (val) =>
@@ -196,6 +197,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 15),
 
+                    // 🔹 Password Field
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
@@ -208,8 +210,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           icon: Icon(_obscurePassword
                               ? Icons.visibility_off
                               : Icons.visibility),
-                          onPressed: () =>
-                              setState(() => _obscurePassword = !_obscurePassword),
+                          onPressed: () => setState(
+                                  () => _obscurePassword = !_obscurePassword),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -220,6 +222,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 10),
 
+                    // 🔹 Remember Me & Forgot Password
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -228,7 +231,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             Checkbox(
                               value: _rememberMe,
                               onChanged: (val) =>
-                                  setState(() => _rememberMe = val!),
+                                  setState(() => _rememberMe = val ?? false),
                               activeColor: const Color(0xFF004E92),
                             ),
                             const Text("Remember Me"),
@@ -245,6 +248,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 15),
 
+                    // 🔹 Sign In Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -255,9 +259,11 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        onPressed: _onSignIn,
+                        onPressed: _isLoading ? null : _onSignIn,
                         child: _isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
+                            ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
                             : const Text(
                           "Sign in",
                           style: TextStyle(
@@ -270,6 +276,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     const SizedBox(height: 15),
 
+                    // 🔹 Google Sign-In
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
@@ -280,13 +287,13 @@ class _SignInScreenState extends State<SignInScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          padding:
-                          const EdgeInsets.symmetric(vertical: 14),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
 
+                    // 🔹 Apple Sign-In (Not active)
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
@@ -297,20 +304,20 @@ class _SignInScreenState extends State<SignInScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          padding:
-                          const EdgeInsets.symmetric(vertical: 14),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
 
+                    // 🔹 Sign Up Link
                     GestureDetector(
                       onTap: _onSignUp,
                       child: const Text.rich(
                         TextSpan(
                           text: "Don’t have an account? ",
-                          style: TextStyle(
-                              color: Colors.black54, fontSize: 15),
+                          style:
+                          TextStyle(color: Colors.black54, fontSize: 15),
                           children: [
                             TextSpan(
                               text: "Sign up",
