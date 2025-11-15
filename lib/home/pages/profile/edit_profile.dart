@@ -130,6 +130,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               : 'https://yourserver.com/$profileImageUrlRaw')
               : null;
 
+          // default asset path (change if your asset filename/path different)
+          const String defaultAssetPath = 'assets/images/default_profile.png';
+
           return SingleChildScrollView(
             padding: EdgeInsets.all(screenWidth > 600 ? 24.0 : 16.0),
             child: Column(
@@ -139,72 +142,74 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      ClipOval(
-                        child: Container(
-                          width: imageSize,
-                          height: imageSize,
-                          child: _image != null
-                              ? Image.file(
-                            _image!,
-                            width: imageSize,
-                            height: imageSize,
+                      // Avatar as a decorated container with DecorationImage (ensures full cover)
+                      Container(
+                        width: imageSize,
+                        height: imageSize,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey[300], // background color behind image
+                          image: DecorationImage(
                             fit: BoxFit.cover,
-                          )
-                              : (profileImageUrl != null
-                              ? Image.network(
-                            profileImageUrl,
-                            width: imageSize,
-                            height: imageSize,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Image.asset(
-                                  'assets/images/profile.jpg.png',
-                                  width: imageSize,
-                                  height: imageSize,
-                                  fit: BoxFit.cover,
-                                ),
-                          )
-                              : Image.asset(
-                            'assets/images/profile.jpg.png',
-                            width: imageSize,
-                            height: imageSize,
-                            fit: BoxFit.cover,
-                          )),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          width: imageSize * 0.30,
-                          height: imageSize * 0.30,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey.shade300, width: 2),
-                          ),
-                          child: Container(
-                            margin: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: primary,
-                            ),
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              icon: Icon(
-                                Icons.add_a_photo_outlined,
-                                size: imageSize * 0.15,
-                                color: Colors.white,
-                              ),
-                              onPressed: _pickImage,
-                            ),
+                            image: _image != null
+                                ? FileImage(_image!) as ImageProvider
+                                : (profileImageUrl != null
+                                ? NetworkImage(profileImageUrl)
+                                : const AssetImage(defaultAssetPath) as ImageProvider),
                           ),
                         ),
                       ),
 
+                      // Photo badge
+                      Builder(builder: (context) {
+                        final double badgeSize = imageSize * 0.30;
+                        final double innerPadding = 4.0;
+                        final double iconSize = (badgeSize - innerPadding * 2) * 0.6;
+
+                        return Positioned(
+                          right: -(badgeSize * 0.08),
+                          bottom: -(badgeSize * 0.08),
+                          child: GestureDetector(
+                            onTap: _pickImage,
+                            child: Container(
+                              width: badgeSize,
+                              height: badgeSize,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                border: Border.all(color: Colors.grey.shade300, width: 2),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.08),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  )
+                                ],
+                              ),
+                              child: Center(
+                                child: Container(
+                                  margin: EdgeInsets.all(innerPadding),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: primary,
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.add_a_photo_outlined,
+                                      size: iconSize,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),
+
                 SizedBox(height: imageSize * 0.15),
                 _buildTextField('Full Name', nameController),
                 const SizedBox(height: 20),
