@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import '../../core/services/network/auth_api.dart';
 import '../model/car_model.dart';
+import '../widgets/trade_analysis_widget.dart';
 import 'ai_chat_page.dart';
 
+// Import the separated trade analysis widget
 class CarDetailsScreen extends StatefulWidget {
   const CarDetailsScreen({super.key, required this.carId});
   final String carId;
@@ -48,19 +50,24 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
+                  /// Car Image
                   if (car.imageUrl.isNotEmpty)
                     Image.network(
                       car.imageUrl,
                       width: double.infinity,
                       height: 220,
                       fit: BoxFit.cover,
-                      errorBuilder: (c, e, s) => const Icon(Icons.image, size: 100),
+                      errorBuilder: (c, e, s) =>
+                      const Icon(Icons.image, size: 100),
                     )
                   else
-                    const Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
+                    const Icon(Icons.image_not_supported,
+                        size: 100, color: Colors.grey),
 
                   const SizedBox(height: 16),
 
+                  /// Car Info Section
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
@@ -71,24 +78,25 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black,
                           ),
                         ),
+
                         const SizedBox(height: 6),
+
                         Text(
                           car.description,
                           style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
+
                         const SizedBox(height: 6),
+
                         Text(
                           "${car.make} • ${car.color} • ${car.year}",
                           style: const TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w400,
                             color: Color(0xff5C5C5C),
                             height: 1.4,
                           ),
@@ -99,6 +107,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
                   const SizedBox(height: 20),
 
+                  /// Features Title
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: const Text(
@@ -106,12 +115,13 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black,
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 16),
 
+                  /// Feature Items
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
@@ -126,6 +136,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
                   const SizedBox(height: 20),
 
+                  /// AI Trade Analysis Button
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: SizedBox(
@@ -155,60 +166,29 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
 
                   const SizedBox(height: 16),
 
+                  /// AI Trade Analysis Widget (separated)
                   if (showAnalysis)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.grey.shade300),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _analysisItem(Icons.attach_money, "Suggested Price", "\$20,000"),
-                                _analysisItem(Icons.repeat, "E . Resale Price", "\$22,000"),
-                                _analysisItem(Icons.build, "E . Repair Cost", "\$2,000"),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 12,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xffEAF2FA),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: const Text(
-                                "Estimated Profit   \$22,000",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff015093),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      child: TradeAnalysisWidget(
+                        carData: {
+                          "title": car.title,
+                          "brand": car.make,
+                          "year_numeric": car.year,
+                          "mileage_numeric": car.year, // তুমি চাইলে correct mileage বসাবে
+                          "price_numeric": car.price,
+                          "is_premium": 0,
+                          "age": DateTime.now().year - car.year,
+                          "url": car.imageUrl,
+                        },
                       ),
                     ),
 
+
+
                   const SizedBox(height: 24),
 
+                  /// Price Section + AI Suggestion Button
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
@@ -219,10 +199,11 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black,
                           ),
                         ),
+
                         const SizedBox(height: 6),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -234,11 +215,13 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                                 color: Color(0xff015093),
                               ),
                             ),
+
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const AiChatPage()),
+                                  MaterialPageRoute(
+                                      builder: (_) => const AiChatPage()),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -255,7 +238,6 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                                 "AI Suggestion",
                                 style: TextStyle(
                                   fontSize: 16,
-                                  fontWeight: FontWeight.w400,
                                   color: Colors.white,
                                 ),
                               ),
@@ -274,6 +256,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
     );
   }
 
+  /// Feature Item UI
   Widget _featureItem(IconData icon, String title, String value) {
     return Column(
       children: [
@@ -287,32 +270,8 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
             style: const TextStyle(fontSize: 12, color: Color(0xff5C5C5C))),
         const SizedBox(height: 6),
         Text(value,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
-      ],
-    );
-  }
-  Widget _analysisItem(IconData icon, String title, String value) {
-    return Column(
-      children: [
-        Icon(icon, color: const Color(0xff015093), size: 28),
-        const SizedBox(height: 6),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w400,
-            color: Color(0xff5C5C5C),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-        ),
+            style: const TextStyle(
+                fontSize: 12, fontWeight: FontWeight.w500)),
       ],
     );
   }
