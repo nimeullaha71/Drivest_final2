@@ -12,11 +12,15 @@ class NotificationDetailScreen extends StatelessWidget {
     required this.index,
   });
 
+  String formatTime(DateTime time) {
+    return "${time.hour}:${time.minute.toString().padLeft(2, '0')} ${time.hour >= 12 ? 'PM' : 'AM'}";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: DrivestAppBar(title: "Notification #$index",),
+      appBar: DrivestAppBar(title: "Notification #$index"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -25,12 +29,12 @@ class NotificationDetailScreen extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: notification.iconColor.withOpacity(0.1),
-                  child: Icon(notification.icon, color: notification.iconColor),
+                  backgroundColor: Colors.blue.withOpacity(0.1),
+                  child: const Icon(Icons.notifications, color: Colors.blue),
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  notification.time,
+                  formatTime(notification.createdAt),
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
@@ -38,22 +42,56 @@ class NotificationDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
+
             const SizedBox(height: 20),
-            Text(
-              notification.title,
-              style: const TextStyle(
+
+            const Text(
+              "Notification Details",
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
             ),
+
             const SizedBox(height: 10),
+
             Text(
-              notification.subtitle,
+              notification.message,
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.black87,
               ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Row(
+              children: [
+                const Text(
+                  "Priority: ",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  notification.priority,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 6),
+
+            Row(
+              children: [
+                const Text(
+                  "Status: ",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  notification.status,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ],
             ),
           ],
         ),
