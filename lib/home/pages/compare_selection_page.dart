@@ -194,22 +194,22 @@ class _SelectablePill extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center, // vertically center
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: selected ? Colors.white : Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
+              // Text(
+              //   title,
+              //   textAlign: TextAlign.center,
+              //   style: TextStyle(
+              //     color: selected ? Colors.white : Colors.black87,
+              //     fontWeight: FontWeight.bold,
+              //     fontSize: 14,
+              //   ),
+              // ),
               const SizedBox(height: 4),
               Text(
                 model,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: selected ? Colors.white70 : Colors.black54,
-                  fontSize: 12,
+                  color: selected ? Colors.white70 : Colors.black,
+                  fontSize: 20,
                 ),
               ),
             ],

@@ -1,3 +1,4 @@
+import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -28,13 +29,14 @@ class CompareResultPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: bg,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: const Text('Compare', style: TextStyle(color: Colors.black)),
-        leading: BackButton(color: primary),
-      ),
+       appBar: DrivestAppBar(title: "Compare"),
+      // AppBar(
+      //   elevation: 0,
+      //   backgroundColor: Colors.white,
+      //   centerTitle: true,
+      //   title: const Text('Compare', style: TextStyle(color: Colors.black)),
+      //   leading: BackButton(color: primary),
+      // ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 84),
         child: Column(
