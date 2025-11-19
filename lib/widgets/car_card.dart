@@ -26,27 +26,32 @@ class CarCard extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: car.imageUrl.isNotEmpty
+                  borderRadius: BorderRadius.circular(12),
+                  child: car.imageUrl != null &&
+                      car.imageUrl.toString().trim().isNotEmpty &&
+                      car.imageUrl != "null"
                       ? Image.network(
-                    car.imageUrl,
+                    car.imageUrl!,
                     height: 180,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        Container(
-                          height: 180,
-                          color: Colors.grey.shade300,
-                          child: Image.asset("assets/images/car.png"),
-                        ),
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        "assets/images/car.png",
+                        height: 180,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      );
+                    },
                   )
-                      : Container(
+                      : Image.asset(
+                    "assets/images/car.png",
                     height: 180,
-                    color: Colors.grey.shade300,
-                    child: const Icon(Icons.directions_car,
-                        size: 60, color: Colors.grey),
+                    width: double.infinity,
+                    fit: BoxFit.cover,
                   ),
                 ),
+
                 Positioned(
                   top: 12,
                   left: 12,

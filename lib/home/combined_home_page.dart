@@ -197,8 +197,14 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
   Widget _buildCarList() {
     return Column(
       children: carList.map((car) {
-        final imageUrl =
-            car['media']?['cover']?['url'] ?? 'https://via.placeholder.com/150';
+        // ---- FIXED IMAGE HANDLING ----
+        final rawUrl = car['media']?['cover']?['url'];
+        final imageUrl = (rawUrl != null &&
+            rawUrl.toString().trim().isNotEmpty &&
+            rawUrl.toString().trim() != "null")
+            ? rawUrl.toString()
+            : null; // null → fallback to asset
+
         final title = car['title'] ?? 'Unknown Car';
         final make = car['make'] ?? '';
         final model = car['model'] ?? '';
@@ -225,14 +231,20 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
               height: 60,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
+                child: imageUrl != null
+                    ? Image.network(
                   imageUrl,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Icon(
-                    Icons.directions_car,
-                    size: 40,
-                    color: Colors.grey,
-                  ),
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/car.png",
+                      fit: BoxFit.cover,
+                    );
+                  },
+                )
+                    : Image.asset(
+                  "assets/images/car.png",
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -254,5 +266,6 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
       }).toList(),
     );
   }
+
 
 }
