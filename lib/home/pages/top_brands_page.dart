@@ -25,15 +25,13 @@ class _TopBrandsPageState extends State<TopBrandsPage> {
   @override
   void initState() {
     super.initState();
-    _loadBrands();
+    _brandsFuture = _loadBrands();
   }
 
-  void _loadBrands() async {
+  Future<List<BrandModel>> _loadBrands() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token") ?? "";
-    setState(() {
-      _brandsFuture = BrandService.fetchBrands(token);
-    });
+    return BrandService.fetchBrands(token);
   }
 
   @override

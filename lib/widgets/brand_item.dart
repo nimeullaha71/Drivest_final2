@@ -9,7 +9,7 @@ class BrandItem extends StatelessWidget {
     required this.imageUrl,
     required this.brandId,
     required this.onTap,
-    Key? key
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -33,14 +33,32 @@ class BrandItem extends StatelessWidget {
               ),
             ],
           ),
-          child: Image.network(
-            imageUrl,
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) =>
-            const Icon(Icons.broken_image, size: 30),
-          ),
+
+          child: _buildBrandImage(),
         ),
       ),
+    );
+  }
+
+  Widget _buildBrandImage() {
+    // 🔥 যদি URL ফাঁকা থাকে, সরাসরি লোকাল image দেখাবে
+    if (imageUrl.isEmpty) {
+      return Image.asset(
+        'assets/images/tesla_logo.png',
+        fit: BoxFit.contain,
+      );
+    }
+
+    // 🔥 API image + fallback to local image
+    return Image.network(
+      imageUrl,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) {
+        return Image.asset(
+          'assets/images/tesla_logo.png',
+          fit: BoxFit.contain,
+        );
+      },
     );
   }
 }
