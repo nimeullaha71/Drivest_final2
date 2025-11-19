@@ -43,8 +43,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
           final userData = userProvider.userData;
           final displayName = userData?['name'] ?? "Guest";
           final displayEmail = userData?['email'] ?? "guest@gmail.com";
-          final dateOfBirth = userData?['dob'] ?? "23/09/02";
-          final address = userData?['address'] ?? "2464 Royal Ln. Mesa, New Jersey 45463";
+          final dateOfBirth = userData?['dob'] ?? "N/A";
+          final address = userData?['address'] ?? "N/A";
           final profileImage = userData?['image'];
 
           return Stack(

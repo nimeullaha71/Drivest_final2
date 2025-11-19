@@ -103,7 +103,7 @@ class _TopBrandsPageState extends State<TopBrandsPage> {
         },
       ),
 
-bottomNavigationBar: CustomBottomNavBar(
+      bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 0,
         onTap: (index) {
           if (index == 1) {

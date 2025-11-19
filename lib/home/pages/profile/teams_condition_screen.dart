@@ -33,7 +33,7 @@ class _TermsAndConditionScreenState extends State<TermsAndConditionScreen> {
               const Text(
                 " These terms and conditions apply to the use of the Drivest app and all related services.",
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   color: Color(0xFF333333),
                   height: 1.5,
                 ),

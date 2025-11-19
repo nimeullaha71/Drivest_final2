@@ -32,7 +32,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               const Text(
                 " At Drivest, we value the protection of your personal data. This policy explains what information we collect, why we collect it, and how we protect it.",
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   color: Color(0xFF333333),
                   height: 1.5,
                 ),
@@ -51,7 +51,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               _buildNumberedItem(
                   "6. Security Drivest takes technical and organizational measures to protect your data from loss,misuse, or unauthorized access."),
               _buildNumberedItem(
-                  "7. Your rights You have the right to access, correct, or delete your data. Contact us atdrivestbelgium@gmail.com for any request.")
+                  "7. Your rights You have the right to access, correct, or delete your data. Contact us at drivestbelgium@gmail.com for any request.")
             ],
           ),
         ),
