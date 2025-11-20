@@ -1,3 +1,4 @@
+import 'package:drivest_office/features/auth/screen/sign_in_screen.dart';
 import 'package:drivest_office/home/pages/profile/refund_policy.dart';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import '../../../home/pages/ai_chat_page.dart';
 import '../../../home/pages/compare_selection_page.dart';
 import '../../../home/pages/saved_page.dart';
 import '../../../main_bottom_nav_screen.dart';
+import '../../auth/services/auth_service.dart';
 import 'change_password_screen.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -19,6 +21,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: DrivestAppBar(title: "Settings"),
@@ -69,7 +72,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     color: Color(0xff015093),
                   ),
                   title: const Text(
-                    "Delete Account",
+                    "Deactivated",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -77,7 +80,62 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                   ),
                   onTap: () {
+                    final scaffoldContext = context; // SAVE CONTEXT BEFORE DIALOG
+
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return AlertDialog(
+                          title: const Text("Confirm Delete"),
+                          content: const Text("Are you sure you want to deactivate your account?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(dialogContext),
+                              child: const Text("Cancel"),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(dialogContext); // close dialog
+
+                                final success = await AuthService().deactivateUser();
+
+                                if (success) {
+                                  // show snackbar safely
+                                  ScaffoldMessenger.of(scaffoldContext).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("User deactivated successfully"),
+                                      duration: Duration(milliseconds: 800),
+                                    ),
+                                  );
+
+                                  await Future.delayed(const Duration(milliseconds: 800));
+
+                                  if (!mounted) return;
+
+                                  Navigator.of(scaffoldContext, rootNavigator: true)
+                                      .pushAndRemoveUntil(
+                                    MaterialPageRoute(builder: (_) => const SignInScreen()),
+                                        (route) => false,
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(scaffoldContext).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Failed to deactivate account. Try again."),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: const Text(
+                                "Deactivated",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
+
                 ),
               ),
             ],

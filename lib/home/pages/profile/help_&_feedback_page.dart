@@ -177,13 +177,13 @@ class _HelpAndFeedbackPageState extends State<HelpAndFeedbackPage> {
                     width: 40,
                     height: 40,
                     margin: const EdgeInsets.only(right: 12),
-                    child: const Icon(Icons.wifi_calling_3_sharp),
+                    child: const Icon(Icons.email),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
                       Text(
-                        "Call Us (+1-212–456–7890)",
+                        "Contact Us ( Drivestbelgium@gmail.com )",
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,

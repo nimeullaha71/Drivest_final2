@@ -2,6 +2,7 @@ class Urls{
   static const String _baseUrl = "https://admin-dashboard.drivestai.com";
   static const String signUpUrl = '${_baseUrl}/register';
   static const String signInUrl = '${_baseUrl}/login';
+  static const String deActivatedUrl = '${_baseUrl}/user/deactivate';
   static const String signInWithGoogleUrl = '${_baseUrl}/google-login';
   static const String carsUrl = '${_baseUrl}/user/cars?initial=true';
   static const String forgotPassUrl = '${_baseUrl}/forgot-password';

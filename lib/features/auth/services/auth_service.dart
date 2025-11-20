@@ -25,6 +25,7 @@ class AuthService {
       if (response.statusCode == 200) {
         final prefs = await SharedPreferences.getInstance();
 
+
         if (data['accessToken'] != null) {
           await prefs.setString('token', data['accessToken']);
         }
@@ -70,5 +71,36 @@ class AuthService {
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
+
   }
+
+  Future<bool> deactivateUser() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("token");
+
+      if (token == null) return false;
+
+      final response = await http.put(
+        Uri.parse(Urls.deActivatedUrl),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // token clear korbo
+        prefs.remove("token");
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("Deactivate Error: $e");
+      return false;
+    }
+  }
+
+
+
 }
