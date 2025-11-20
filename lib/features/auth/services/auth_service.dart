@@ -22,35 +22,29 @@ class AuthService {
       final data = jsonDecode(response.body);
       print("🔹 Login Response: $data");
 
-      if (response.statusCode == 200) {
-        final prefs = await SharedPreferences.getInstance();
-
-
-        if (data['accessToken'] != null) {
-          await prefs.setString('token', data['accessToken']);
-        }
-
-        if (data['trialExpired'] == true) {
-          throw Exception("TRIAL_EXPIRED");
-        }
-
-        return true;
+      // ⛔ Check if user is deactivated
+      if (data['code'] == "USER_DEACTIVATED") {
+        throw Exception("ACCOUNT_DEACTIVATED");
       }
 
-      if (response.statusCode == 403) {
-        final prefs = await SharedPreferences.getInstance();
-        if (data['accessToken'] != null) {
-          await prefs.setString('token', data['accessToken']);
-        }
+      // ⛔ Trial expired
+      if (data['trialExpired'] == true) {
         throw Exception("TRIAL_EXPIRED");
       }
 
-      throw Exception("LOGIN_FAILED: ${response.statusCode}");
+      if (response.statusCode == 200 && data['accessToken'] != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', data['accessToken']);
+        return true;
+      }
+
+      throw Exception("LOGIN_FAILED");
     } catch (e) {
       print("Login Error: $e");
       rethrow;
     }
   }
+
 
 
   Future<void> signOut() async {

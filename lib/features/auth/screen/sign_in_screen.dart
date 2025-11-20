@@ -54,18 +54,22 @@ class _SignInScreenState extends State<SignInScreen> {
         );
       }
     } catch (e) {
-      if (e.toString().contains("TRIAL_EXPIRED")) {
-        if (!mounted) return;
-        Future.microtask(() {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const PaymentPage()),
-          );
-        });
-      } else {
-        _showError("Invalid email or password");
+      if (e.toString().contains("ACCOUNT_DEACTIVATED")) {
+        _showError("This account is deactivated. Please contact support.");
+        return;
       }
-    } finally {
+
+      if (e.toString().contains("TRIAL_EXPIRED")) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const PaymentPage()),
+        );
+        return;
+      }
+
+      _showError("Invalid email or password");
+    }
+    finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
