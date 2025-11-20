@@ -198,7 +198,7 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
     return Column(
       children: carList.map((car) {
         // ---- FIXED IMAGE HANDLING ----
-        final rawUrl = car['media']?['cover']?['url'];
+        final rawUrl = car['image'];
         final imageUrl = (rawUrl != null &&
             rawUrl.toString().trim().isNotEmpty &&
             rawUrl.toString().trim() != "null")

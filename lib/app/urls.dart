@@ -3,7 +3,7 @@ class Urls{
   static const String signUpUrl = '${_baseUrl}/register';
   static const String signInUrl = '${_baseUrl}/login';
   static const String signInWithGoogleUrl = '${_baseUrl}/google-login';
-  static const String carsUrl = '${_baseUrl}/user/cars';
+  static const String carsUrl = '${_baseUrl}/user/cars?initial=true';
   static const String forgotPassUrl = '${_baseUrl}/forgot-password';
   static const String verifyOtpUrl = '${_baseUrl}/verify-otp';
   static const String resetPassUrl = '${_baseUrl}/reset-password';

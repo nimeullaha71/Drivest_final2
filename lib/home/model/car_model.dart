@@ -42,7 +42,7 @@ class CarModel {
       price: parseInt(json['price']),
       city: json['city'] ?? '',
       country: json['country'] ?? '',
-      imageUrl: json['media']?['cover']?['url'] ?? '',
+      imageUrl: json['image'] ?? '',
       description: json['description'] ?? '',
       specs: json['specs']?['seats'] ?? 0,
     );
