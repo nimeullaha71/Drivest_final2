@@ -2,6 +2,9 @@ import 'package:drivest_office/features/notifications/screen/notification_screen
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/services/network/user_provider.dart';
+import '../../features/auth/services/auth_service.dart';
+import '../../features/notifications/services/notification_count_provider.dart';
+import '../../features/notifications/services/notification_service.dart';
 
 class TopAppBar extends StatefulWidget {
   final double appBarHeight;
@@ -15,13 +18,24 @@ class _TopAppBarState extends State<TopAppBar> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Fetch user profile
       Provider.of<UserProvider>(context, listen: false).fetchUserProfile();
+
+      // Fetch notification count
+      String? token = await AuthService().getToken();
+      if (token != null) {
+        int count = await NotificationService.getNotificationCount(token);
+        Provider.of<NotificationCountProvider>(context, listen: false)
+            .setCount(count);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final notifCount = Provider.of<NotificationCountProvider>(context).count;
+
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
         if (userProvider.isLoading) {
@@ -41,7 +55,6 @@ class _TopAppBarState extends State<TopAppBar> {
         }
 
         final userData = userProvider.userData;
-        print("🔥 TopAppBar: UserData = $userData");
         final displayName = userData?['name'] ?? 'Guest';
         final displayEmail = userData?['email'] ?? 'email@gmail.com';
 
@@ -73,7 +86,6 @@ class _TopAppBarState extends State<TopAppBar> {
                             height: 42,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
-                              // যদি network image fail করে, default placeholder দেখাবে
                               return Image.asset(
                                 'assets/images/profile_img.jpg',
                                 width: 42,
@@ -90,19 +102,22 @@ class _TopAppBarState extends State<TopAppBar> {
                           ),
                         ),
                       ),
-
                       const SizedBox(width: 10),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Hi, $displayName', // ✅ API থেকে
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600)),
-                          Text(displayEmail, // ✅ API থেকে
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.white70)),
+                          Text(
+                            'Hi, $displayName',
+                            style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            displayEmail,
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.white70),
+                          ),
                         ],
                       ),
                     ],
@@ -120,29 +135,31 @@ class _TopAppBarState extends State<TopAppBar> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => NotificationScreen()),
+                              builder: (context) => const NotificationScreen(),
+                            ),
                           );
                         },
                       ),
-                      Positioned(
-                        right: 6,
-                        top: 6,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Text(
-                            '4',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                      if (notifCount > 0)
+                        Positioned(
+                          right: 6,
+                          top: 6,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              notifCount.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),

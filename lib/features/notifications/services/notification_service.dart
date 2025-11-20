@@ -25,4 +25,9 @@ class NotificationService {
       throw Exception("Failed to load notifications");
     }
   }
+
+  static Future<int> getNotificationCount(String token) async {
+    final notifications = await getNotifications(token);
+    return notifications.length;
+  }
 }

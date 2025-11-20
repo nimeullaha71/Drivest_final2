@@ -6,6 +6,7 @@ import 'package:app_links/app_links.dart';
 import 'app/app.dart';
 import 'core/services/network/car_provider.dart';
 import 'core/services/network/user_provider.dart';
+import 'features/notifications/services/notification_count_provider.dart';
 import 'home/controller/saved_car_controller.dart';
 
 StreamSubscription<Uri>? _linkSub;
@@ -18,8 +19,9 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => CarProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationCountProvider()), // ✅ এখানে
+        ChangeNotifierProvider(create: (_) => CarProvider()),
       ],
       child: const MyApp(),
     ),
