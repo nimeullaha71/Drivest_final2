@@ -22,7 +22,7 @@ class CombinedHomePage extends StatefulWidget {
 
 class _CombinedHomePageState extends State<CombinedHomePage> {
   final List<String> conditionOptions = const ['New', 'Old', 'Repaired'];
-  final List<String> categoryOptions = const ['Jeep', 'Sports', 'Others'];
+  //final List<String> categoryOptions = const ['Jeep', 'Sports', 'Others'];
   String selectedCondition = 'New';
   String selectedCategory = '';
 
@@ -96,8 +96,8 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final double appBarHeight = screenHeight * 0.28;
-    const double containerHeight = 224.0;
+    final double appBarHeight = screenHeight * 0.22;
+    const double containerHeight = 160.0;
     const double overlapHeight = containerHeight / 2;
 
     return Scaffold(
@@ -151,19 +151,19 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  CategoryButtons(
-                    options: categoryOptions,
-                    onTap: (o) {
-                      setState(() => selectedCategory = o);
-                      fetchCars();
-                    },
-                  ),
+                  // CategoryButtons(
+                  //   options: categoryOptions,
+                  //   onTap: (o) {
+                  //     setState(() => selectedCategory = o);
+                  //     fetchCars();
+                  //   },
+                  // ),
                 ],
               ),
             ),
           ),
           Positioned(
-            top: appBarHeight + overlapHeight + 16,
+            top: appBarHeight + overlapHeight + 20,
             left: 24,
             right: 24,
             bottom: 0,
