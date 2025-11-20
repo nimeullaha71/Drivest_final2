@@ -136,16 +136,16 @@ class CarCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '${car.city}, ${car.country}',
-                style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: Color.fromRGBO(92, 92, 92, 1)),
-              ),
-            ),
+            // Align(
+            //   alignment: Alignment.centerLeft,
+            //   child: Text(
+            //     '${car.city}, ${car.country}',
+            //     style: const TextStyle(
+            //         fontSize: 14,
+            //         fontWeight: FontWeight.w400,
+            //         color: Color.fromRGBO(92, 92, 92, 1)),
+            //   ),
+            // ),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -155,11 +155,7 @@ class CarCard extends StatelessWidget {
                       fontSize: 14, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  'Color: ${car.color}',
-                  style: const TextStyle(
-                      fontSize: 14, fontWeight: FontWeight.w500),
-                ),
+
               ],
             ),
           ],
