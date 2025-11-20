@@ -98,11 +98,10 @@ class _FilteredCarPageState extends State<FilteredCarPage> {
                 height: 60,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: car['media'] != null &&
-                      car['media']['cover'] != null &&
-                      car['media']['cover']['url'] != null
+                  child: car['image'] != null &&
+                      car['image'].toString().trim().isNotEmpty
                       ? Image.network(
-                    car['media']['cover']['url'],
+                    car['image'],
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>
                     const Icon(Icons.directions_car, size: 40, color: Colors.grey),
@@ -110,6 +109,7 @@ class _FilteredCarPageState extends State<FilteredCarPage> {
                       : const Icon(Icons.directions_car, size: 40, color: Colors.grey),
                 ),
               ),
+
               title: Text(
                 car['title'] ?? 'Unknown Car',
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
