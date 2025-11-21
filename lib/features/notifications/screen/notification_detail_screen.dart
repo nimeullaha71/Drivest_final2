@@ -1,6 +1,6 @@
-import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
 import '../model/notification_model.dart';
+import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 
 class NotificationDetailScreen extends StatelessWidget {
   final NotificationModel notification;
@@ -35,37 +35,21 @@ class NotificationDetailScreen extends StatelessWidget {
                 const SizedBox(width: 10),
                 Text(
                   formatTime(notification.createdAt),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ],
             ),
-
             const SizedBox(height: 20),
-
             const Text(
               "Notification Details",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
-
             const SizedBox(height: 10),
-
             Text(
               notification.message,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black87,
-              ),
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
             ),
-
             const SizedBox(height: 20),
-
             Row(
               children: [
                 const Text(
@@ -78,9 +62,7 @@ class NotificationDetailScreen extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 6),
-
             Row(
               children: [
                 const Text(
@@ -88,7 +70,7 @@ class NotificationDetailScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  notification.status,
+                  notification.isRead ? 'Read' : 'Unread',
                   style: const TextStyle(fontSize: 14),
                 ),
               ],

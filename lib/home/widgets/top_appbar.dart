@@ -1,10 +1,9 @@
-import 'package:drivest_office/features/notifications/screen/notification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/services/network/user_provider.dart';
 import '../../features/auth/services/auth_service.dart';
 import '../../features/notifications/services/notification_count_provider.dart';
-import '../../features/notifications/services/notification_service.dart';
+import '../../features/notifications/screen/notification_screen.dart';
 
 class TopAppBar extends StatefulWidget {
   final double appBarHeight;
@@ -19,15 +18,11 @@ class _TopAppBarState extends State<TopAppBar> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // Fetch user profile
       Provider.of<UserProvider>(context, listen: false).fetchUserProfile();
 
-      // Fetch notification count
       String? token = await AuthService().getToken();
       if (token != null) {
-        int count = await NotificationService.getNotificationCount(token);
-        Provider.of<NotificationCountProvider>(context, listen: false)
-            .setCount(count);
+        await context.read<NotificationCountProvider>().refreshCount(token);
       }
     });
   }
@@ -79,7 +74,8 @@ class _TopAppBarState extends State<TopAppBar> {
                         decoration: const BoxDecoration(
                             color: Colors.white, shape: BoxShape.circle),
                         child: ClipOval(
-                          child: userData?['image'] != null && userData!['image'].isNotEmpty
+                          child: userData?['image'] != null &&
+                              userData!['image'].isNotEmpty
                               ? Image.network(
                             userData['image'],
                             width: 42,
@@ -131,13 +127,19 @@ class _TopAppBarState extends State<TopAppBar> {
                       IconButton(
                         icon: const Icon(Icons.notifications,
                             size: 32, color: Colors.white),
-                        onPressed: () {
-                          Navigator.push(
+                        onPressed: () async {
+                          await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const NotificationScreen(),
                             ),
                           );
+
+                          // Refresh unread count after returning
+                          String? token = await AuthService().getToken();
+                          if (token != null) {
+                            await context.read<NotificationCountProvider>().refreshCount(token);
+                          }
                         },
                       ),
                       if (notifCount > 0)

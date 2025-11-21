@@ -1,6 +1,8 @@
 import 'package:drivest_office/features/auth/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../model/notification_model.dart';
+import '../services/notification_count_provider.dart';
 import '../services/notification_service.dart';
 import 'notification_detail_screen.dart';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
@@ -15,6 +17,7 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   List<NotificationModel> notifications = [];
   bool isLoading = true;
+  String? token;
 
   @override
   void initState() {
@@ -24,7 +27,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   fetchNotifications() async {
     try {
-      String? token = await AuthService().getToken(); // nullable
+      token = await AuthService().getToken();
 
       if (token == null) {
         print("Token not found!");
@@ -32,7 +35,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
         return;
       }
 
-      final list = await NotificationService.getNotifications(token);
+      final list = await NotificationService.getNotifications(token!);
+
+      final unreadCount = list.where((n) => !n.isRead).length;
+      final provider = context.read<NotificationCountProvider>();
+      provider.setCount(unreadCount);
 
       setState(() {
         notifications = list;
@@ -44,7 +51,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
 
-
   String formatTime(DateTime time) {
     return "${time.hour}:${time.minute.toString().padLeft(2, '0')}";
   }
@@ -53,7 +59,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: const DrivestAppBar(title: "Notification"),
+      appBar: const DrivestAppBar(title: "Notifications"),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : notifications.isEmpty
@@ -69,40 +75,61 @@ class _NotificationScreenState extends State<NotificationScreen> {
         separatorBuilder: (context, index) => const Divider(),
         itemBuilder: (context, index) {
           final item = notifications[index];
-
-          return ListTile(
-            leading: CircleAvatar(
-              radius: 22,
-              backgroundColor: Colors.blue.withOpacity(0.1),
-              child: Icon(Icons.notifications, color: Colors.blue),
+          return Container(
+            decoration: BoxDecoration(
+              color: item.isRead ? Colors.white : Colors.blue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
             ),
-            title: Text(
-              "New Notification",
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
+            child: ListTile(
+              leading: CircleAvatar(
+                radius: 22,
+                backgroundColor: Colors.blue.withOpacity(0.1),
+                child: Icon(Icons.notifications, color: Colors.blue),
               ),
-            ),
-            subtitle: Text(
-              item.message,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            trailing: Text(
-              formatTime(item.createdAt),
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => NotificationDetailScreen(
-                    notification: item,
-                    index: index + 1,
-                  ),
+              title: Text(
+                "New Notification",
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  color: item.isRead ? Colors.black87 : Colors.black,
                 ),
-              );
-            },
+              ),
+              subtitle: Text(
+                item.message,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: item.isRead ? Colors.black54 : Colors.black87,
+                ),
+              ),
+              trailing: Text(
+                formatTime(item.createdAt),
+                style: const TextStyle(fontSize: 12, color: Colors.black54),
+              ),
+              onTap: () async {
+                if (!item.isRead) {
+                  item.isRead = true;
+                  final provider = context.read<NotificationCountProvider>();
+                  provider.decrement();
+
+                  if (token != null) {
+                    await NotificationService.markAsRead(item.id, token!);
+                  }
+
+                  setState(() {}); // refresh UI
+                }
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => NotificationDetailScreen(
+                      notification: item,
+                      index: index + 1,
+                    ),
+                  ),
+                );
+              },
+            ),
           );
         },
       ),

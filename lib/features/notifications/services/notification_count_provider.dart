@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'notification_service.dart';
+import '../../auth/services/auth_service.dart';
 
 class NotificationCountProvider extends ChangeNotifier {
   int _count = 0;
@@ -20,5 +22,12 @@ class NotificationCountProvider extends ChangeNotifier {
       _count--;
       notifyListeners();
     }
+  }
+
+  // Refresh count from backend
+  Future<void> refreshCount(String token) async {
+    final notifications = await NotificationService.getNotifications(token);
+    _count = notifications.where((n) => !n.isRead).length;
+    notifyListeners();
   }
 }

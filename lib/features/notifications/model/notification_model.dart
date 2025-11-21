@@ -1,25 +1,25 @@
 class NotificationModel {
   final String id;
   final String message;
-  final String status;
-  final String priority;
   final DateTime createdAt;
+  final String priority;
+  bool isRead;
 
   NotificationModel({
     required this.id,
     required this.message,
-    required this.status,
-    required this.priority,
     required this.createdAt,
+    required this.priority,
+    this.isRead = false,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
-      id: json["_id"],
-      message: json["message"],
-      status: json["status"],
-      priority: json["priority"],
-      createdAt: DateTime.parse(json["createdAt"]),
+      id: json['_id'] ?? '',
+      message: json['message'] ?? '',
+      createdAt: DateTime.parse(json['createdAt']),
+      priority: json['priority'] ?? 'normal',
+      isRead: json['status'] == 'read',
     );
   }
 }

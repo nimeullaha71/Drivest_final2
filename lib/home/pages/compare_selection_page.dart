@@ -130,17 +130,24 @@ class _CompareSelectionPageState extends State<CompareSelectionPage> {
           child: ElevatedButton(
             onPressed: _selected.length == 2
                 ? () {
-              final selectedCars = _order
-                  .map((i) => carProvider.cars[i])
-                  .toList();
+              final selectedCars = _order.map((i) => carProvider.cars[i]).toList();
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => CompareResultPage(
-                        selectedCars: selectedCars,
-                      )));
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CompareResultPage(
+                    selectedCars: selectedCars,
+                  ),
+                ),
+              ).then((_) {
+                // Reset selections when coming back
+                setState(() {
+                  _selected.clear();
+                  _order.clear();
+                });
+              });
             }
                 : null,
+
             style: ElevatedButton.styleFrom(
               backgroundColor: primary,
               disabledBackgroundColor: primary.withOpacity(.35),

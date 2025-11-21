@@ -18,12 +18,12 @@ class CompareResultPage extends StatelessWidget {
     final carB = selectedCars[1];
 
     final specs = <_SpecRowData>[
+      _SpecRowData('Title',            carA['title']?.toString() ?? '', carB['title']?.toString() ?? ''),
       _SpecRowData('Company',              carA['make']?.toString() ?? '', carB['make']?.toString() ?? ''),
-      _SpecRowData('Fuel Type',            carA['fuelType']?.toString() ?? '', carB['fuelType']?.toString() ?? ''),
+      _SpecRowData('Price',            carA['price']?.toString() ?? '', carB['price']?.toString() ?? ''),
       _SpecRowData('Model',                carA['model']?.toString() ?? '', carB['model']?.toString() ?? ''),
       _SpecRowData('Year',                 carA['year']?.toString() ?? '', carB['year']?.toString() ?? ''),
       _SpecRowData('BodyType',           carA['bodyType']?.toString() ?? '', carB['bodyType']?.toString() ?? ''),
-      _SpecRowData('Color',               carA['color']?.toString() ?? '', carB['color']?.toString() ?? ''),
     ];
 
 
@@ -62,23 +62,23 @@ class CompareResultPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
 
-            Row(
-              children: [
-                Expanded(
-                  child: _NamePriceCentered(
-                    name: carA['title']?.toString() ?? '',
-                    price: carA['price']?.toString() ?? '',
-                  ),
-                ),
-                Expanded(
-                  child: _NamePriceCentered(
-                    name: carB['title']?.toString() ?? '',
-                    price: carB['price']?.toString() ?? '',
-                  ),
-                ),
-
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: _NamePriceCentered(
+            //         name: carA['title']?.toString() ?? '',
+            //         price: carA['price']?.toString() ?? '',
+            //       ),
+            //     ),
+            //     Expanded(
+            //       child: _NamePriceCentered(
+            //         name: carB['title']?.toString() ?? '',
+            //         price: carB['price']?.toString() ?? '',
+            //       ),
+            //     ),
+            //
+            //   ],
+            // ),
             const SizedBox(height: 12),
 
             Container(

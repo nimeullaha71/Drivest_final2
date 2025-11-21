@@ -278,41 +278,41 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 30),
 
                     // 🔹 Google Sign-In
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: _onGoogleSignIn,
-                        icon: SvgPicture.asset('assets/images/google.svg'),
-                        label: const Text("Sign in with Google"),
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // 🔹 Apple Sign-In (Not active)
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: _onAppleSignIn,
-                        icon: SvgPicture.asset('assets/images/apple.svg'),
-                        label: const Text("Sign in with Apple"),
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   child: OutlinedButton.icon(
+                    //     onPressed: _onGoogleSignIn,
+                    //     icon: SvgPicture.asset('assets/images/google.svg'),
+                    //     label: const Text("Sign in with Google"),
+                    //     style: OutlinedButton.styleFrom(
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(30),
+                    //       ),
+                    //       padding: const EdgeInsets.symmetric(vertical: 14),
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 10),
+                    //
+                    // // 🔹 Apple Sign-In (Not active)
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   child: OutlinedButton.icon(
+                    //     onPressed: _onAppleSignIn,
+                    //     icon: SvgPicture.asset('assets/images/apple.svg'),
+                    //     label: const Text("Sign in with Apple"),
+                    //     style: OutlinedButton.styleFrom(
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(30),
+                    //       ),
+                    //       padding: const EdgeInsets.symmetric(vertical: 14),
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 20),
 
                     // 🔹 Sign Up Link
                     GestureDetector(
@@ -339,7 +339,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 6),
         ],
       ),
     );
