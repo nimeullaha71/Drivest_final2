@@ -64,7 +64,7 @@ class FeaturedCarListPage extends StatelessWidget {
                         },
                       ),
                       Positioned(
-                        bottom: 20,
+                        bottom: 10,
                         right: 20,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(

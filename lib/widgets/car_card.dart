@@ -155,7 +155,6 @@ class CarCard extends StatelessWidget {
                       fontSize: 14, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(width: 12),
-
               ],
             ),
           ],

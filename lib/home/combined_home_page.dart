@@ -3,10 +3,10 @@ import 'package:drivest_office/app/urls.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'widgets/top_appbar.dart';
 import 'widgets/condition_selector.dart';
 import 'widgets/search_and_filter.dart';
-import 'widgets/category_buttons.dart';
 import 'widgets/featured_car_section.dart';
 import 'widgets/top_brands_section.dart';
 import 'widgets/recommended_section.dart';
@@ -22,14 +22,16 @@ class CombinedHomePage extends StatefulWidget {
 
 class _CombinedHomePageState extends State<CombinedHomePage> {
   final List<String> conditionOptions = const ['New', 'Old', 'Repaired'];
-  //final List<String> categoryOptions = const ['Jeep', 'Sports', 'Others'];
+
   String selectedCondition = 'New';
   String selectedCategory = '';
 
   final TextEditingController searchController = TextEditingController();
 
   bool isLoading = false;
-  List<dynamic> carList = [];
+
+  List<dynamic> allCars = [];  // <- added
+  List<dynamic> carList = [];  // <- filtered list
 
   @override
   void initState() {
@@ -38,7 +40,6 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
   }
 
   Future<void> fetchCars([Map<String, dynamic>? filters]) async {
-
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -49,7 +50,7 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
       final queryParams = {
         'status': 'published',
         'page': '1',
-        'limit': '10',
+        'limit': '500',       // fetch more so filtering works better
         'sort': '-publishedAt',
         if (searchController.text.isNotEmpty) 'q': searchController.text,
       };
@@ -59,38 +60,62 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
           if (value != null && value.toString().isNotEmpty) {
             queryParams[key] = value.toString();
           }
-        }
-        );
+        });
       }
 
       debugPrint('Query Params: $queryParams');
 
-      final uri = Uri.parse(Urls.carsUrl).replace(queryParameters: queryParams);
-      debugPrint('API URL: $uri');
+      final uri =
+      Uri.parse(Urls.carsUrl).replace(queryParameters: queryParams);
 
       final res = await http.get(
-          uri,
+        uri,
         headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
       );
+
       if (!mounted) return;
 
       if (res.statusCode == 200) {
         final data = json.decode(res.body);
         debugPrint('API Response: $data');
+
         if (data['success'] == true) {
-          setState(() => carList = data['data'] ?? []);
+          allCars = data['data'] ?? [];
+          _applyFilters();  // <- filter after fetching
         }
       } else {
-        debugPrint('Failed to load cars: ${res.statusCode}');
+        debugPrint('Failed: ${res.statusCode}');
       }
     } catch (e) {
       debugPrint('API error: $e');
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
+  }
+
+  /// FILTERING FUNCTION
+  void _applyFilters() {
+    List<dynamic> filtered = [];
+
+    for (var car in allCars) {
+      final year = int.tryParse(car['year']?.toString() ?? '') ?? 0;
+      final condition = car['condition']?.toString().toLowerCase() ?? '';
+
+      if (selectedCondition == "New") {
+        if (year > 2020) filtered.add(car);
+      } else if (selectedCondition == "Old") {
+        if (year <= 2020) filtered.add(car);
+      } else if (selectedCondition == "Repaired") {
+        if (condition == "repaired") filtered.add(car);
+      }
+    }
+
+    setState(() {
+      carList = filtered.take(15).toList();
+    });
   }
 
   @override
@@ -121,7 +146,7 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                 color: Colors.grey[100],
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: const [
-                  BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3))
+                  BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
                 ],
               ),
               child: Column(
@@ -131,15 +156,13 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                     selected: selectedCondition,
                     onChanged: (v) {
                       setState(() => selectedCondition = v);
-                      fetchCars();
+                      _applyFilters();   // <- changed
                     },
                   ),
                   const SizedBox(height: 16),
                   SearchAndFilter(
                     controller: searchController,
-                    onSearch: () {
-                      fetchCars();
-                    },
+                    onSearch: () => fetchCars(),
                     onFilterTap: () async {
                       final filters = await Navigator.push(
                         context,
@@ -150,14 +173,6 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                       }
                     },
                   ),
-                  const SizedBox(height: 16),
-                  // CategoryButtons(
-                  //   options: categoryOptions,
-                  //   onTap: (o) {
-                  //     setState(() => selectedCategory = o);
-                  //     fetchCars();
-                  //   },
-                  // ),
                 ],
               ),
             ),
@@ -176,7 +191,8 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                     const Text("No cars found", style: TextStyle(color: Colors.grey))
                   else
                     _buildCarList(),
-                  const SizedBox(height: 24,),
+
+                  const SizedBox(height: 24),
                   const FeaturedCarSinglePage(),
                   const SizedBox(height: 24),
                   const TopBrandsSection(),
@@ -184,7 +200,6 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                   const RecommendedSection(),
                   const SizedBox(height: 24),
                   const AiSuggestionCard(),
-                  const SizedBox(height: 16),
                 ],
               ),
             ),
@@ -197,13 +212,10 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
   Widget _buildCarList() {
     return Column(
       children: carList.map((car) {
-        // ---- FIXED IMAGE HANDLING ----
         final rawUrl = car['image'];
-        final imageUrl = (rawUrl != null &&
-            rawUrl.toString().trim().isNotEmpty &&
-            rawUrl.toString().trim() != "null")
+        final imageUrl = (rawUrl != null && rawUrl.toString().trim().isNotEmpty)
             ? rawUrl.toString()
-            : null; // null → fallback to asset
+            : null;
 
         final title = car['title'] ?? 'Unknown Car';
         final make = car['make'] ?? '';
@@ -224,8 +236,7 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
             ],
           ),
           child: ListTile(
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             leading: SizedBox(
               width: 60,
               height: 60,
@@ -235,17 +246,10 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                     ? Image.network(
                   imageUrl,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      "assets/images/car.png",
-                      fit: BoxFit.cover,
-                    );
-                  },
+                  errorBuilder: (_, __, ___) =>
+                      Image.asset("assets/images/car.png"),
                 )
-                    : Image.asset(
-                  "assets/images/car.png",
-                  fit: BoxFit.cover,
-                ),
+                    : Image.asset("assets/images/car.png"),
               ),
             ),
             title: Text(
@@ -266,6 +270,4 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
       }).toList(),
     );
   }
-
-
 }
