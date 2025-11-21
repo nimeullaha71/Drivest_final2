@@ -43,6 +43,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
           final userData = userProvider.userData;
           final displayName = userData?['name'] ?? "Guest";
           final displayEmail = userData?['email'] ?? "guest@gmail.com";
+          final displayPhone = userData?['phone'] ?? "N/A";
           final dateOfBirth = userData?['dob'] ?? "N/A";
           final address = userData?['address'] ?? "N/A";
           final profileImage = userData?['image'];
@@ -82,7 +83,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     const SizedBox(height: 16),
                     _buildProfileInfoRow('Full Name:', displayName),
                     const SizedBox(height: 16),
-                    _buildProfileInfoRow('Email/Phone Number:', displayEmail),
+                    _buildProfileInfoRow('Email:', displayEmail),
+                    const SizedBox(height: 16),
+                    _buildProfileInfoRow('Phone Number:', displayPhone),
                     const SizedBox(height: 16),
                     _buildProfileInfoRow('Date of Birth:', dateOfBirth),
                     const SizedBox(height: 16),
