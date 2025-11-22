@@ -18,16 +18,13 @@ void main() {
   Get.put(SavedCarController(), permanent: true);
 
   runApp(
-    DevicePreview(
-      enabled: true, // true kore rakhle emulator + hot reload e test hobe
-      builder: (context) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => UserProvider()),
-          ChangeNotifierProvider(create: (_) => NotificationCountProvider()),
-          ChangeNotifierProvider(create: (_) => CarProvider()),
-        ],
-        child: const MyApp(),
-      ),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationCountProvider()),
+        ChangeNotifierProvider(create: (_) => CarProvider()),
+      ],
+      child: const MyApp(),
     ),
   );
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:drivest_office/app/urls.dart';
+import 'package:drivest_office/home/pages/car_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -212,6 +213,8 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
   Widget _buildCarList() {
     return Column(
       children: carList.map((car) {
+        final carId = car['_id'] ?? car['id'] ?? '';
+
         final rawUrl = car['image'];
         final imageUrl = (rawUrl != null && rawUrl.toString().trim().isNotEmpty)
             ? rawUrl.toString()
@@ -235,36 +238,46 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
               ),
             ],
           ),
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            leading: SizedBox(
-              width: 60,
-              height: 60,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: imageUrl != null
-                    ? Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
-                      Image.asset("assets/images/car.png"),
-                )
-                    : Image.asset("assets/images/car.png"),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CarDetailsScreen(carId: carId),
+                ),
+              );
+            },
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              leading: SizedBox(
+                width: 60,
+                height: 60,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: imageUrl != null
+                      ? Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        Image.asset("assets/images/car.png"),
+                  )
+                      : Image.asset("assets/images/car.png"),
+                ),
               ),
-            ),
-            title: Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
+              title: Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-              overflow: TextOverflow.ellipsis,
+              subtitle: Text(
+                "$make • $model\n\$$price",
+                style: const TextStyle(fontSize: 12, height: 1.4),
+              ),
+              isThreeLine: true,
             ),
-            subtitle: Text(
-              "$make • $model\n\$$price",
-              style: const TextStyle(fontSize: 12, height: 1.4),
-            ),
-            isThreeLine: true,
           ),
         );
       }).toList(),
