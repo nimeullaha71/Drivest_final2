@@ -50,6 +50,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       print("Error: $e");
     }
   }
+
   void markAllNotifications() async {
     if (token == null) return;
 
@@ -72,8 +73,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     setState(() {});
   }
 
-
-
   String formatTime(DateTime time) {
     return "${time.hour}:${time.minute.toString().padLeft(2, '0')}";
   }
@@ -82,22 +81,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: const Text("Notifications"),
+      appBar: DrivestAppBar(
+        title: "Notifications",
         actions: [
-          Consumer<NotificationCountProvider>(
-            builder: (context, provider, _) {
-              return provider.count > 0
-                  ? TextButton(
-                onPressed: markAllNotifications,
-                child: const Text(
-                  "Mark all read",
-                  style: TextStyle(color: Colors.green),
-                ),
-              )
-                  : SizedBox();
-            },
-          )
+          TextButton(
+            onPressed: markAllNotifications,
+            child: Text("Mark All Read"),
+          ),
         ],
       ),
 
@@ -105,80 +95,85 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ? const Center(child: CircularProgressIndicator())
           : notifications.isEmpty
           ? const Center(
-        child: Text(
-          "No notifications available",
-          style: TextStyle(fontSize: 16, color: Color(0xff333333)),
-        ),
-      )
+              child: Text(
+                "No notifications available",
+                style: TextStyle(fontSize: 16, color: Color(0xff333333)),
+              ),
+            )
           : ListView.separated(
-        padding: const EdgeInsets.all(12),
-        itemCount: notifications.length,
-        separatorBuilder: (context, index) => const Divider(),
-        itemBuilder: (context, index) {
-          final item = notifications[index];
-          return Container(
-            decoration: BoxDecoration(
-              color: item.isRead ? Colors.white : Colors.blue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: ListTile(
-              leading: CircleAvatar(
-                radius: 22,
-                backgroundColor: Colors.blue.withOpacity(0.1),
-                child: Icon(Icons.notifications, color: Colors.blue),
-              ),
-              title: Text(
-                "New Notification",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                  color: item.isRead ? Colors.black87 : Colors.black,
-                ),
-              ),
-              subtitle: Text(
-                item.message,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: item.isRead ? Colors.black54 : Colors.black87,
-                ),
-              ),
-              trailing: Text(
-                formatTime(item.createdAt),
-                style: const TextStyle(fontSize: 12, color: Colors.black54),
-              ),
-                onTap: () async {
-                  if (!item.isRead) {
-                    item.isRead = true;
-
-                    final provider = context.read<NotificationCountProvider>();
-                    provider.decrement();
-
-                    if (token != null) {
-                      await NotificationService.markAsRead(item.id, token!);
-
-                      // 🔥 important: backend theke real count reload
-                      await provider.refreshCount(token!);
-                    }
-
-                    setState(() {});
-                  }
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => NotificationDetailScreen(
-                        notification: item,
-                        index: index + 1,
+              padding: const EdgeInsets.all(12),
+              itemCount: notifications.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final item = notifications[index];
+                return Container(
+                  decoration: BoxDecoration(
+                    color: item.isRead
+                        ? Colors.white
+                        : Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 22,
+                      backgroundColor: Colors.blue.withOpacity(0.1),
+                      child: Icon(Icons.notifications, color: Colors.blue),
+                    ),
+                    title: Text(
+                      "New Notification",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: item.isRead ? Colors.black87 : Colors.black,
                       ),
                     ),
-                  );
-                }
+                    subtitle: Text(
+                      item.message,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: item.isRead ? Colors.black54 : Colors.black87,
+                      ),
+                    ),
+                    trailing: Text(
+                      formatTime(item.createdAt),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    onTap: () async {
+                      if (!item.isRead) {
+                        item.isRead = true;
 
+                        final provider = context
+                            .read<NotificationCountProvider>();
+                        provider.decrement();
+
+                        if (token != null) {
+                          await NotificationService.markAsRead(item.id, token!);
+
+                          // 🔥 important: backend theke real count reload
+                          await provider.refreshCount(token!);
+                        }
+
+                        setState(() {});
+                      }
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => NotificationDetailScreen(
+                            notification: item,
+                            index: index + 1,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

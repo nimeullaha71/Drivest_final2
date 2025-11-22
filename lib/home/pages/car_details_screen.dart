@@ -175,7 +175,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                           "title": car.title,
                           "brand": car.make,
                           "year_numeric": car.year,
-                          "mileage_numeric": car.year, // তুমি চাইলে correct mileage বসাবে
+                          "mileage_numeric": car.mileage, // তুমি চাইলে correct mileage বসাবে
                           "price_numeric": car.price,
                           "is_premium": 0,
                           "age": DateTime.now().year - car.year,

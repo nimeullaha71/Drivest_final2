@@ -1,6 +1,8 @@
+import 'package:drivest_office/home/pages/saved_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/services/network/car_provider.dart';
+import '../../main_bottom_nav_screen.dart';
 import 'compare_page.dart';
 
 class CompareSelectionPage extends StatefulWidget {
@@ -59,15 +61,31 @@ class _CompareSelectionPageState extends State<CompareSelectionPage> {
     return Scaffold(
       backgroundColor: bg,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
+        backgroundColor: Colors.white,
         centerTitle: true,
-        title: const Text(
-          'Car Selection',
-          style: TextStyle(
-              color: Color(0xFF333333),
-              fontWeight: FontWeight.w400,
-              fontSize: 20),
+        title: const Text('Car Selection', style: TextStyle(color: Colors.black)),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(18),
+            onTap: () => Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => MainBottomNavScreen()),
+                  (route) => false,
+            ),
+            child: Container(
+              width: 32,
+              height: 32,
+              decoration: const BoxDecoration(
+                  color: Color(0xffCCDCE9), shape: BoxShape.circle),
+              child: const Icon(Icons.arrow_back_ios_new, size: 18, color: SavedPage.primary),
+            ),
+          ),
+        ),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, color: Colors.black12),
         ),
       ),
       body: SafeArea(

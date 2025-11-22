@@ -22,9 +22,10 @@ class _TradeAnalysisWidgetState extends State<TradeAnalysisWidget> {
 
   Future<void> fetchAnalysis() async {
     try {
-      final response = await TradeAnalysisAPI.analyzeCar(widget.carData);
+      final result = await TradeAnalysisAPI.analyzeCar(widget.carData);
+
       setState(() {
-        analysis = response[0];
+        analysis = result;
         loading = false;
       });
     } catch (e) {

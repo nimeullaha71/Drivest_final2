@@ -9,9 +9,10 @@ class CarModel {
   final String country;
   final String imageUrl;
   final String description;
-  final int specs;
+  final int specs;      // seats
+  final int mileage;    // new field
 
-  CarModel( {
+  CarModel({
     required this.id,
     required this.title,
     required this.color,
@@ -23,6 +24,7 @@ class CarModel {
     required this.imageUrl,
     required this.description,
     required this.specs,
+    required this.mileage,  // add here
   });
 
   factory CarModel.fromJson(Map<String, dynamic> json) {
@@ -45,7 +47,7 @@ class CarModel {
       imageUrl: json['image'] ?? '',
       description: json['description'] ?? '',
       specs: json['specs']?['seats'] ?? 0,
+      mileage: parseInt(json['mileage']), // ✅ new mapping
     );
   }
-
 }

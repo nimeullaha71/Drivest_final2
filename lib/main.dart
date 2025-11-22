@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -17,13 +18,16 @@ void main() {
   Get.put(SavedCarController(), permanent: true);
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => NotificationCountProvider()), // ✅ এখানে
-        ChangeNotifierProvider(create: (_) => CarProvider()),
-      ],
-      child: const MyApp(),
+    DevicePreview(
+      enabled: true, // true kore rakhle emulator + hot reload e test hobe
+      builder: (context) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => UserProvider()),
+          ChangeNotifierProvider(create: (_) => NotificationCountProvider()),
+          ChangeNotifierProvider(create: (_) => CarProvider()),
+        ],
+        child: const MyApp(),
+      ),
     ),
   );
 

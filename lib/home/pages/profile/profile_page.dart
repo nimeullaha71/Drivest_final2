@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/services/network/user_provider.dart';
 import '../../../main_bottom_nav_screen.dart';
+import '../saved_page.dart';
 import 'privacy_policy_screen.dart';
 import '../../../features/auth/services/auth_service.dart';
 
@@ -49,31 +50,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.only(left: 8),
           child: InkWell(
             borderRadius: BorderRadius.circular(18),
-            onTap: () => Navigator.maybePop(context),
+            onTap: () => Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => MainBottomNavScreen()),
+                  (route) => false,
+            ),
             child: Container(
               width: 32,
               height: 32,
               decoration: const BoxDecoration(
-                color: Color(0xffCCDCE9),
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => MainBottomNavScreen()),
-                        (route) => false,
-                  );
-                },
-                icon: Icon(Icons.arrow_back_ios, size: 18, color: _primary),
-              ),
+                  color: Color(0xffCCDCE9), shape: BoxShape.circle),
+              child: const Icon(Icons.arrow_back_ios_new, size: 18, color: SavedPage.primary),
             ),
           ),
         ),
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, thickness: 1, color: Colors.black12),
+          child: Divider(height: 1, color: Colors.black12),
         ),
       ),
       body: Consumer<UserProvider>(

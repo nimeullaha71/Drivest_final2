@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 
 class TradeAnalysisAPI {
 
-  static Future<List<dynamic>> analyzeCar(Map<String, dynamic> carData) async {
+// ✅ CHANGE RETURN TYPE + PARSING
+  static Future<Map<String, dynamic>> analyzeCar(Map<String, dynamic> carData) async {
     final response = await http.post(
       Uri.parse(Urls.carAnalyzeUrl),
       headers: {
@@ -14,9 +15,11 @@ class TradeAnalysisAPI {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final result = jsonDecode(response.body);
+      return result["data"][0]; // ✅ extract only the first analysis object
     } else {
       throw Exception("Failed to analyze car: ${response.body}");
     }
   }
+
 }
