@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:drivest_office/app/urls.dart'; 
+import 'package:drivest_office/app/urls.dart';
 
 class AuthService {
-  Future<bool> signIn({
+  /// Returns a Map with status: SUCCESS, TRIAL_EXPIRED, DEACTIVATED, FAILED
+  /// temp_token is provided if TRIAL_EXPIRED
+  Future<Map<String, dynamic>> signIn({
     required String email,
     required String password,
     bool remember = false,
@@ -22,30 +24,35 @@ class AuthService {
       final data = jsonDecode(response.body);
       print("🔹 Login Response: $data");
 
-      // ⛔ Check if user is deactivated
+      // Deactivated account
       if (data['code'] == "USER_DEACTIVATED") {
-        throw Exception("ACCOUNT_DEACTIVATED");
+        return {"status": "DEACTIVATED"};
+      }
+      if (data['code'] == "USER_PENDING") {
+        return {"status": "Pending"};
       }
 
-      // ⛔ Trial expired
+      // Trial expired
       if (data['trialExpired'] == true) {
-        throw Exception("TRIAL_EXPIRED");
+        return {
+          "status": "TRIAL_EXPIRED",
+          "temp_token": data['accessToken'],
+        };
       }
 
+      // Active subscription
       if (response.statusCode == 200 && data['accessToken'] != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', data['accessToken']);
-        return true;
+        return {"status": "SUCCESS"};
       }
 
-      throw Exception("LOGIN_FAILED");
+      return {"status": "FAILED"};
     } catch (e) {
       print("Login Error: $e");
-      rethrow;
+      return {"status": "FAILED"};
     }
   }
-
-
 
   Future<void> signOut() async {
     final prefs = await SharedPreferences.getInstance();
@@ -54,25 +61,15 @@ class AuthService {
     await prefs.remove('name');
   }
 
-  Future<Map<String, String>> getUserInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    return {
-      'name': prefs.getString('name') ?? 'Guest',
-      'email': prefs.getString('email') ?? 'guest@gmail.com',
-    };
-  }
-
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
-
   }
 
   Future<bool> deactivateUser() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString("token");
-
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token");
       if (token == null) return false;
 
       final response = await http.put(
@@ -84,7 +81,6 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
-        // token clear korbo
         prefs.remove("token");
         return true;
       }
@@ -94,7 +90,4 @@ class AuthService {
       return false;
     }
   }
-
-
-
 }
