@@ -86,7 +86,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       context: context,
                       builder: (dialogContext) {
                         return AlertDialog(
-                          title: const Text("Confirm Delete"),
+                          title: const Text("Confirm Deactivated"),
                           content: const Text("Are you sure you want to deactivate your account?"),
                           actions: [
                             TextButton(

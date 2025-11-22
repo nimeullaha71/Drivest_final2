@@ -21,9 +21,9 @@ class CompareResultPage extends StatelessWidget {
       _SpecRowData('Title',            carA['title']?.toString() ?? '', carB['title']?.toString() ?? ''),
       _SpecRowData('Company',              carA['make']?.toString() ?? '', carB['make']?.toString() ?? ''),
       _SpecRowData('Price',            carA['price']?.toString() ?? '', carB['price']?.toString() ?? ''),
-      _SpecRowData('Model',                carA['model']?.toString() ?? '', carB['model']?.toString() ?? ''),
+      //_SpecRowData('Model',                carA['model']?.toString() ?? '', carB['model']?.toString() ?? ''),
       _SpecRowData('Year',                 carA['year']?.toString() ?? '', carB['year']?.toString() ?? ''),
-      _SpecRowData('BodyType',           carA['bodyType']?.toString() ?? '', carB['bodyType']?.toString() ?? ''),
+     // _SpecRowData('BodyType',           carA['bodyType']?.toString() ?? '', carB['bodyType']?.toString() ?? ''),
     ];
 
 

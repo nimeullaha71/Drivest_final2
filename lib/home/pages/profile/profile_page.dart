@@ -101,13 +101,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                         errorBuilder: (context, error, stackTrace) {
                           return Image.asset(
-                            'assets/images/profile.jpg.png',
+                            'assets/images/profile_img.jpg',
                             fit: BoxFit.cover,
                           );
                         },
                       )
                           : Image.asset(
-                        'assets/images/profile.jpg.png',
+                        'assets/images/profile_img.jpg',
                         fit: BoxFit.cover,
                       ),
                     ),

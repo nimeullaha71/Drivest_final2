@@ -131,7 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               : null;
 
           // default asset path (change if your asset filename/path different)
-          const String defaultAssetPath = 'assets/images/default_profile.png';
+          const String defaultAssetPath = 'assets/images/profile_img.jpg';
 
           return SingleChildScrollView(
             padding: EdgeInsets.all(screenWidth > 600 ? 24.0 : 16.0),

@@ -69,13 +69,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Image.asset(
-                              'assets/images/profile.jpg.png',
+                              'assets/images/profile_img.jpg',
                               fit: BoxFit.cover,
                             );
                           },
                         )
                             : Image.asset(
-                          'assets/images/profile.jpg.png',
+                          'assets/images/profile_img.jpg',
                           fit: BoxFit.cover,
                         ),
                       ),
