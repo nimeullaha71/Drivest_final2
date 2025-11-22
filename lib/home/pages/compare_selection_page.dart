@@ -118,7 +118,7 @@ class _CompareSelectionPageState extends State<CompareSelectionPage> {
                   },
                 ),
               ),
-            SizedBox(height: 128,)
+            SizedBox(height: 88,)
           ],
         ),
       ),

@@ -50,6 +50,29 @@ class _NotificationScreenState extends State<NotificationScreen> {
       print("Error: $e");
     }
   }
+  void markAllNotifications() async {
+    if (token == null) return;
+
+    // get all notification IDs
+    final allIds = notifications.map((e) => e.id).toList();
+
+    // call backend API
+    await NotificationService.markAllAsRead(token!, allIds);
+
+    // update all items locally
+    for (var n in notifications) {
+      n.isRead = true;
+    }
+
+    // update provider count = 0
+    final provider = context.read<NotificationCountProvider>();
+    provider.setCount(0);
+
+    // refresh UI
+    setState(() {});
+  }
+
+
 
   String formatTime(DateTime time) {
     return "${time.hour}:${time.minute.toString().padLeft(2, '0')}";
@@ -59,7 +82,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: const DrivestAppBar(title: "Notifications"),
+      appBar: AppBar(
+        title: const Text("Notifications"),
+        actions: [
+          Consumer<NotificationCountProvider>(
+            builder: (context, provider, _) {
+              return provider.count > 0
+                  ? TextButton(
+                onPressed: markAllNotifications,
+                child: const Text(
+                  "Mark all read",
+                  style: TextStyle(color: Colors.green),
+                ),
+              )
+                  : SizedBox();
+            },
+          )
+        ],
+      ),
+
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : notifications.isEmpty
@@ -106,29 +147,34 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 formatTime(item.createdAt),
                 style: const TextStyle(fontSize: 12, color: Colors.black54),
               ),
-              onTap: () async {
-                if (!item.isRead) {
-                  item.isRead = true;
-                  final provider = context.read<NotificationCountProvider>();
-                  provider.decrement();
+                onTap: () async {
+                  if (!item.isRead) {
+                    item.isRead = true;
 
-                  if (token != null) {
-                    await NotificationService.markAsRead(item.id, token!);
+                    final provider = context.read<NotificationCountProvider>();
+                    provider.decrement();
+
+                    if (token != null) {
+                      await NotificationService.markAsRead(item.id, token!);
+
+                      // 🔥 important: backend theke real count reload
+                      await provider.refreshCount(token!);
+                    }
+
+                    setState(() {});
                   }
 
-                  setState(() {}); // refresh UI
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => NotificationDetailScreen(
+                        notification: item,
+                        index: index + 1,
+                      ),
+                    ),
+                  );
                 }
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => NotificationDetailScreen(
-                      notification: item,
-                      index: index + 1,
-                    ),
-                  ),
-                );
-              },
             ),
           );
         },

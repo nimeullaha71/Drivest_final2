@@ -30,7 +30,29 @@ class NotificationService {
   }
 
   static Future<void> markAsRead(String id, String token) async {
-    final url = Uri.parse("${Urls.notificationUrl}/$id/read");
+    final url = Uri.parse(Urls.notificationReadUrl);
+
+    final body = jsonEncode({
+      "ids": [id]
+    });
+
+    final response = await http.put(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+      body: body,
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to mark notification as read");
+    }
+  }
+
+  static Future<void> markAllAsRead(String token, List<String> allIds) async {
+    final url = Uri.parse(Urls.notificationAllReadUrl);
+
 
     final response = await http.put(
       url,
@@ -41,7 +63,9 @@ class NotificationService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception("Failed to mark notification as read");
+      throw Exception("Failed to mark all notifications as read");
     }
   }
+
+
 }
