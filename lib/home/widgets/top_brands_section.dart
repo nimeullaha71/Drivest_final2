@@ -71,7 +71,9 @@ class _TopBrandsSectionState extends State<TopBrandsSection> {
               ? const Center(child: CircularProgressIndicator())
               : FutureBuilder<List<BrandModel>>(
             future: _brandsFuture,
+
             builder: (context, snapshot) {
+
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
@@ -81,6 +83,11 @@ class _TopBrandsSectionState extends State<TopBrandsSection> {
               }
 
               final brands = snapshot.data!;
+              print("Total brands fetched: ${brands.length}");
+              for (var brand in brands) {
+                print("Brand: ${brand.name}, Image URL: ${brand.image}");
+              }
+
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: brands.length,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class BrandItem extends StatelessWidget {
   final String imageUrl;
@@ -41,7 +42,6 @@ class BrandItem extends StatelessWidget {
   }
 
   Widget _buildBrandImage() {
-    // 🔥 যদি URL ফাঁকা থাকে, সরাসরি লোকাল image দেখাবে
     if (imageUrl.isEmpty) {
       return Image.asset(
         'assets/images/tesla_logo.png',
@@ -49,16 +49,37 @@ class BrandItem extends StatelessWidget {
       );
     }
 
-    // 🔥 API image + fallback to local image
+    // SVG check
+    if (imageUrl.toLowerCase().endsWith('.svg')) {
+      return SvgPicture.network(
+        imageUrl,
+        placeholderBuilder: (context) =>
+            Image.asset('assets/images/tesla_logo.png'),
+        height: 50,
+        width: 50,
+      );
+    }
+
+    // Normal image
     return Image.network(
       imageUrl,
       fit: BoxFit.contain,
+      key: ValueKey(imageUrl),
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return const Center(child: CircularProgressIndicator());
+      },
       errorBuilder: (context, error, stackTrace) {
+        // 🔹 Retry once after short delay
+        Future.delayed(const Duration(milliseconds: 200), () {
+          print("Retry loading image: $imageUrl");
+        });
         return Image.asset(
           'assets/images/tesla_logo.png',
           fit: BoxFit.contain,
         );
       },
     );
+
   }
 }
