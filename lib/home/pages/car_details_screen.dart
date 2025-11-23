@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
+import '../../app/app_strings.dart';
 import '../../core/services/network/auth_api.dart';
 import '../model/car_model.dart';
 import '../widgets/trade_analysis_widget.dart';
@@ -208,7 +209,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "\$${car.price}",
+                              "${AppStrings.currencySign}${car.price}",
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,

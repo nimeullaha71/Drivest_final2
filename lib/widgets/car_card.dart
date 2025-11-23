@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../app/app_strings.dart';
 import '../home/controller/saved_car_controller.dart';
 import '../home/model/car_model.dart';
 
@@ -126,7 +127,7 @@ class CarCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '\$${car.price}',
+                  '${AppStrings.currencySign} ${car.price}',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w500,

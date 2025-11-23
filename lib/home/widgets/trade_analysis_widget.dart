@@ -1,3 +1,4 @@
+import 'package:drivest_office/app/app_strings.dart';
 import 'package:flutter/material.dart';
 import '../pages/services/network/trade_analysis_api.dart';
 
@@ -59,9 +60,9 @@ class _TradeAnalysisWidgetState extends State<TradeAnalysisWidget> {
       ),
       child: Column(
         children: [
-          _row("Suggested Price", "\$${analysis!["estimated_market_value"]}"),
-          _row("Estimated Costs", "\$${analysis!["total_costs"]}"),
-          _row("Expected Profit", "\$${analysis!["expected_profit"]}"),
+          _row("Suggested Price", " ${AppStrings.currencySign} ${analysis!["estimated_market_value"]}"),
+          _row("Estimated Costs", "${AppStrings.currencySign} ${analysis!["total_costs"]}"),
+          _row("Expected Profit", "${AppStrings.currencySign} ${analysis!["expected_profit"]}"),
           _row("Profit Margin", "${analysis!["profit_margin_pct"]}%"),
           _row("Risk Level", analysis!["risk_level"]),
           const SizedBox(height: 10),

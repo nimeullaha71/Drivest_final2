@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:drivest_office/app/app_strings.dart';
 import 'package:drivest_office/app/urls.dart';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +117,7 @@ class _FilteredCarPageState extends State<FilteredCarPage> {
                 overflow: TextOverflow.ellipsis,
               ),
               subtitle: Text(
-                '${car['make'] ?? ''} ${car['model'] ?? ''}\nPrice: \$${car['price'] ?? 'N/A'} | ${car['year'] ?? ''}',
+                '${car['make'] ?? ''} ${car['model'] ?? ''}\nPrice:  ${AppStrings.currencySign}${car['price'] ?? 'N/A'} | ${car['year'] ?? ''}',
                 style: const TextStyle(fontSize: 12, height: 1.4),
               ),
               isThreeLine: true,

@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:drivest_office/app/urls.dart';
+import 'package:drivest_office/home/model/car_model.dart';
 
 class CarProvider extends ChangeNotifier {
   bool _isLoading = false;
-  List<Map<String, dynamic>> _cars = [];
+  List<CarModel> _cars = [];
 
   bool get isLoading => _isLoading;
-  List<Map<String, dynamic>> get cars => _cars;
+  List<CarModel> get cars => _cars;
 
   Future<void> fetchCars({String? search, Map<String, dynamic>? filters}) async {
     _isLoading = true;
@@ -22,7 +23,7 @@ class CarProvider extends ChangeNotifier {
       final queryParams = {
         'status': 'published',
         'page': '1',
-        'limit': '10',
+        'limit': '100',
         'sort': '-publishedAt',
         if (search != null && search.isNotEmpty) 'q': search,
       };
@@ -38,8 +39,6 @@ class CarProvider extends ChangeNotifier {
       final uri = Uri.parse(Urls.carsUrl)
           .replace(queryParameters: queryParams);
 
-      debugPrint('API URL: $uri');
-
       final res = await http.get(
         uri,
         headers: {
@@ -50,8 +49,10 @@ class CarProvider extends ChangeNotifier {
 
       if (res.statusCode == 200) {
         final data = json.decode(res.body);
+
         if (data['success'] == true && data['data'] != null) {
-          _cars = List<Map<String, dynamic>>.from(data['data']);
+          final List items = data['data'];
+          _cars = items.map((json) => CarModel.fromJson(json)).toList();
         } else {
           _cars = [];
         }

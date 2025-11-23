@@ -1,9 +1,10 @@
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import '../model/car_model.dart';
 
 class CompareResultPage extends StatelessWidget {
-  final List<Map<String, dynamic>> selectedCars;
+  final List<CarModel> selectedCars;
 
   const CompareResultPage({super.key, required this.selectedCars});
 
@@ -18,25 +19,18 @@ class CompareResultPage extends StatelessWidget {
     final carB = selectedCars[1];
 
     final specs = <_SpecRowData>[
-      _SpecRowData('Title',            carA['title']?.toString() ?? '', carB['title']?.toString() ?? ''),
-      _SpecRowData('Company',              carA['make']?.toString() ?? '', carB['make']?.toString() ?? ''),
-      _SpecRowData('Price',            carA['price']?.toString() ?? '', carB['price']?.toString() ?? ''),
-      //_SpecRowData('Model',                carA['model']?.toString() ?? '', carB['model']?.toString() ?? ''),
-      _SpecRowData('Year',                 carA['year']?.toString() ?? '', carB['year']?.toString() ?? ''),
-     // _SpecRowData('BodyType',           carA['bodyType']?.toString() ?? '', carB['bodyType']?.toString() ?? ''),
+      _SpecRowData('Title', carA.title, carB.title),
+      _SpecRowData('Company', carA.make, carB.make),
+      _SpecRowData('Price', carA.price.toString(), carB.price.toString()),
+      _SpecRowData('Year', carA.year.toString(), carB.year.toString()),
+      //_SpecRowData('Color', carA.color, carB.color),
+      _SpecRowData('Mileage', carA.mileage.toString(), carB.mileage.toString()),
+      //_SpecRowData('Seats', carA.specs.toString(), carB.specs.toString()),
     ];
-
 
     return Scaffold(
       backgroundColor: bg,
-       appBar: DrivestAppBar(title: "Compare"),
-      // AppBar(
-      //   elevation: 0,
-      //   backgroundColor: Colors.white,
-      //   centerTitle: true,
-      //   title: const Text('Compare', style: TextStyle(color: Colors.black)),
-      //   leading: BackButton(color: primary),
-      // ),
+      appBar: DrivestAppBar(title: "Compare"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 84),
         child: Column(
@@ -60,27 +54,7 @@ class CompareResultPage extends StatelessWidget {
                 Expanded(child: _CarHeaderTile(car: carB, alignRight: true)),
               ],
             ),
-            const SizedBox(height: 8),
-
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: _NamePriceCentered(
-            //         name: carA['title']?.toString() ?? '',
-            //         price: carA['price']?.toString() ?? '',
-            //       ),
-            //     ),
-            //     Expanded(
-            //       child: _NamePriceCentered(
-            //         name: carB['title']?.toString() ?? '',
-            //         price: carB['price']?.toString() ?? '',
-            //       ),
-            //     ),
-            //
-            //   ],
-            // ),
             const SizedBox(height: 12),
-
             Container(
               decoration: BoxDecoration(
                 color: panel,
@@ -91,16 +65,16 @@ class CompareResultPage extends StatelessWidget {
                 children: specs
                     .map(
                       (s) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        child: _SpecRow(
-                          label: s.label,
-                          left: s.left,
-                          right: s.right,
-                          labelBg: labelChip,
-                          panelBg: panel,
-                        ),
-                      ),
-                    )
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: _SpecRow(
+                      label: s.label,
+                      left: s.left,
+                      right: s.right,
+                      labelBg: labelChip,
+                      panelBg: panel,
+                    ),
+                  ),
+                )
                     .toList(),
               ),
             ),
@@ -133,15 +107,15 @@ class CompareResultPage extends StatelessWidget {
 }
 
 class _CarHeaderTile extends StatelessWidget {
-  final Map<String, dynamic> car;
+  final CarModel car;
   final bool alignRight;
   const _CarHeaderTile({required this.car, this.alignRight = false});
 
-  bool get _isSvg => (car['image']?.toString() ?? '').toLowerCase().endsWith('.svg');
+  bool get _isSvg => car.imageUrl.toLowerCase().endsWith('.svg');
 
   @override
   Widget build(BuildContext context) {
-    final carImage = car['image']?.toString() ?? '';
+    final carImage = car.imageUrl;
     Widget imageWidget;
 
     if (carImage.isEmpty) {
@@ -163,8 +137,6 @@ class _CarHeaderTile extends StatelessWidget {
   }
 }
 
-
-
 class _SpecRowData {
   final String label, left, right;
   const _SpecRowData(this.label, this.left, this.right);
@@ -180,6 +152,7 @@ class _SpecRow extends StatelessWidget {
     required this.labelBg,
     required this.panelBg,
   });
+
   @override
   Widget build(BuildContext context) {
     const double rowHeight = 64;
@@ -194,6 +167,7 @@ class _SpecRow extends StatelessWidget {
       color: Colors.black87,
       height: 1.25,
     );
+
     return Container(
       height: rowHeight,
       decoration: BoxDecoration(
@@ -242,32 +216,6 @@ class _SpecRow extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _NamePriceCentered extends StatelessWidget {
-  final String name, price;
-  const _NamePriceCentered({required this.name, required this.price});
-  @override
-  Widget build(BuildContext context) {
-    const nameStyle = TextStyle(
-      color: Color(0xFF5A5A5A),
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-    );
-    const priceStyle = TextStyle(
-      color: Color(0xFF6F6F6F),
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-    );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(name, style: nameStyle, textAlign: TextAlign.center),
-        const SizedBox(height: 4),
-        Text('Price: $price', style: priceStyle, textAlign: TextAlign.center),
-      ],
     );
   }
 }

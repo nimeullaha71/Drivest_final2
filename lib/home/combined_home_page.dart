@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:drivest_office/app/app_strings.dart';
 import 'package:drivest_office/app/urls.dart';
 import 'package:drivest_office/home/pages/car_details_screen.dart';
 import 'package:flutter/material.dart';
@@ -273,7 +274,7 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                 overflow: TextOverflow.ellipsis,
               ),
               subtitle: Text(
-                "$make • $model\n\$$price",
+                "$make • $model\n\ ${AppStrings.currencySign}$price",
                 style: const TextStyle(fontSize: 12, height: 1.4),
               ),
               isThreeLine: true,
