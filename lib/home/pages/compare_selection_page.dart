@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/services/network/car_provider.dart';
-import '../../widgets/car_card.dart';
 import '../../widgets/small_car_card.dart';
-import 'car_details_screen.dart';
 import 'compare_page.dart';
 import '../../main_bottom_nav_screen.dart';
 import 'package:drivest_office/home/pages/saved_page.dart';
@@ -23,7 +21,8 @@ class _CompareSelectionPageState extends State<CompareSelectionPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<CarProvider>(context, listen: false).fetchCars();
+      // 🔹 Fetch featured cars instead of all cars
+      Provider.of<CarProvider>(context, listen: false).fetchFeaturedCars();
     });
   }
 
@@ -82,12 +81,12 @@ class _CompareSelectionPageState extends State<CompareSelectionPage> {
         padding: const EdgeInsets.all(16.0),
         child: carProvider.isLoading
             ? const Center(child: CircularProgressIndicator())
-            : carProvider.cars.isEmpty
+            : carProvider.featuredCars.isEmpty
             ? const Center(child: Text('No cars available'))
             : ListView.builder(
-          itemCount: carProvider.cars.length,
+          itemCount: carProvider.featuredCars.length,
           itemBuilder: (context, index) {
-            final car = carProvider.cars[index];
+            final car = carProvider.featuredCars[index];
             final isSelected = _selected.contains(index);
 
             return GestureDetector(
@@ -98,10 +97,9 @@ class _CompareSelectionPageState extends State<CompareSelectionPage> {
                     opacity: isSelected ? 0.5 : 1,
                     child: SmallCarCard(
                       car: car,
-                      isSelected: _selected.contains(index),
+                      isSelected: isSelected,
                       onTap: () => _toggle(index),
                     ),
-
                   ),
                   if (isSelected)
                     const Positioned(
@@ -123,11 +121,12 @@ class _CompareSelectionPageState extends State<CompareSelectionPage> {
           child: ElevatedButton(
             onPressed: _selected.length == 2
                 ? () {
-              final selectedCars = _order.map((i) => carProvider.cars[i]).toList();
+              final selectedCars =
+              _order.map((i) => carProvider.featuredCars[i]).toList();
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => CompareResultPage(selectedCars: selectedCars,),
+                  builder: (_) => CompareResultPage(selectedCars: selectedCars),
                 ),
               ).then((_) {
                 setState(() {
