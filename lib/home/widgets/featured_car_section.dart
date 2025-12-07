@@ -2,6 +2,7 @@ import 'package:drivest_office/home/pages/car_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../core/services/network/car_service.dart';
+import '../../features/auth/screen/sign_in_screen.dart';
 import '../controller/saved_car_controller.dart';
 import '../model/car_model.dart';
 import '../../widgets/car_card.dart';
@@ -51,6 +52,22 @@ class FeaturedCarSinglePage extends StatelessWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
+              if (snapshot.hasError) {
+                if (snapshot.error.toString() == 'Exception: TOKEN_EXPIRED') {
+                  // 🔥 Token expired → force logout
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SignInScreen()),
+                          (route) => false,
+                    );
+                  });
+                  return const Center(child: Text('Session expired. Redirecting to login...'));
+                }
+
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+
               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               }

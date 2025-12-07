@@ -31,7 +31,17 @@ class CarService {
         } else {
           return [];
         }
-      } else {
+      }
+      if (response.statusCode == 401) {
+        // Token expired → force logout
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('token');
+
+        // Throw a custom exception
+        throw Exception('TOKEN_EXPIRED');
+      }
+
+      else {
         throw Exception('Failed to load cars: ${response.statusCode}');
       }
     } catch (e) {

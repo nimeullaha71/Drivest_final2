@@ -5,54 +5,55 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../home/combined_home_page.dart';
 import '../../../home/model/car_model.dart';
+import 'auth_utils.dart';
 
 class ApiService {
 
-  Future<bool> signIn({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final response = await http.post(
-        Uri.parse(Urls.signInUrl),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "email": email,
-          "password": password,
-        }),
-      );
-
-      final data = jsonDecode(response.body);
-      print("Login Response: $data");
-
-      if (response.statusCode == 200) {
-        final prefs = await SharedPreferences.getInstance();
-
-        if (data['accessToken'] != null) {
-          await prefs.setString('token', data['accessToken']);
-        }
-
-        if (data['trialExpired'] == true) {
-          throw Exception("TRIAL_EXPIRED");
-        }
-
-        return true;
-      }
-
-      if (response.statusCode == 403) {
-        final prefs = await SharedPreferences.getInstance();
-        if (data['accessToken'] != null) {
-          await prefs.setString('token', data['accessToken']);
-        }
-        throw Exception("TRIAL_EXPIRED");
-      }
-
-      throw Exception("LOGIN_FAILED: ${response.statusCode}");
-    } catch (e) {
-      print("Login Error: $e");
-      rethrow;
-    }
-  }
+  // Future<bool> signIn({
+  //   required String email,
+  //   required String password,
+  // }) async {
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(Urls.signInUrl),
+  //       headers: {"Content-Type": "application/json"},
+  //       body: jsonEncode({
+  //         "email": email,
+  //         "password": password,
+  //       }),
+  //     );
+  //
+  //     final data = jsonDecode(response.body);
+  //     print("Login Response: $data");
+  //
+  //     if (response.statusCode == 200) {
+  //       final prefs = await SharedPreferences.getInstance();
+  //
+  //       if (data['accessToken'] != null) {
+  //         await prefs.setString('token', data['accessToken']);
+  //       }
+  //
+  //       if (data['trialExpired'] == true) {
+  //         throw Exception("TRIAL_EXPIRED");
+  //       }
+  //
+  //       return true;
+  //     }
+  //
+  //     if (response.statusCode == 403) {
+  //       final prefs = await SharedPreferences.getInstance();
+  //       if (data['accessToken'] != null) {
+  //         await prefs.setString('token', data['accessToken']);
+  //       }
+  //       throw Exception("TRIAL_EXPIRED");
+  //     }
+  //
+  //     throw Exception("LOGIN_FAILED: ${response.statusCode}");
+  //   } catch (e) {
+  //     print("Login Error: $e");
+  //     rethrow;
+  //   }
+  // }
 
 
   static Future<bool> registerUser({
@@ -183,6 +184,13 @@ class ApiService {
       print("🔥 Profile API Response: ${response.statusCode}");
       print("🔥 Profile API Body: ${response.body}");
 
+      if (response.statusCode == 401 ||
+          response.statusCode == 402 ||
+          response.statusCode == 403) {
+        await AuthUtils.handleUnauthorized();
+        throw Exception("Unauthorized! Logging out...");
+      }
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final user = data['user'] ?? data;
@@ -223,7 +231,16 @@ class ApiService {
         request.headers['Authorization'] = 'Bearer $token';
       }
 
+
       var response = await request.send();
+
+      if (response.statusCode == 401 ||
+          response.statusCode == 402 ||
+          response.statusCode == 403) {
+        await AuthUtils.handleUnauthorized();
+        throw Exception("Unauthorized! Logging out...");
+      }
+
       if (response.statusCode == 200) {
         print("✅ Profile updated successfully!");
         return true;
@@ -250,6 +267,14 @@ class ApiService {
       },
     );
 
+    if (response.statusCode == 401 ||
+        response.statusCode == 402 ||
+        response.statusCode == 403) {
+      await AuthUtils.handleUnauthorized();
+      throw Exception("Unauthorized! Logging out...");
+    }
+
+
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonData = jsonDecode(response.body);
       return CarModel.fromJson(jsonData['data']);
@@ -274,6 +299,13 @@ class ApiService {
           'Authorization': 'Bearer $token',
         },
       );
+
+      if (response.statusCode == 401 ||
+          response.statusCode == 402 ||
+          response.statusCode == 403) {
+        await AuthUtils.handleUnauthorized();
+        throw Exception("Unauthorized! Logging out...");
+      }
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);

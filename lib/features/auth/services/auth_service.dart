@@ -24,6 +24,7 @@ class AuthService {
       final data = jsonDecode(response.body);
       print("🔹 Login Response: $data");
 
+
       // Deactivated account
       if (data['code'] == "USER_DEACTIVATED") {
         return {"status": "DEACTIVATED"};
@@ -46,6 +47,7 @@ class AuthService {
         await prefs.setString('token', data['accessToken']);
         return {"status": "SUCCESS"};
       }
+
 
       return {"status": "FAILED"};
     } catch (e) {

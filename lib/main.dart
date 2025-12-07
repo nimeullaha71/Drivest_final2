@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:app_links/app_links.dart';
+
 import 'app/app.dart';
 import 'core/services/network/car_provider.dart';
 import 'core/services/network/user_provider.dart';
@@ -12,10 +12,16 @@ import 'home/controller/saved_car_controller.dart';
 
 StreamSubscription<Uri>? _linkSub;
 AppLinks? _appLinks;
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-void main() {
-  Get.put(SavedCarController());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();   // ✅ MUST HAVE
+
+  // GetX controllers
   Get.put(SavedCarController(), permanent: true);
+
+  // Deep link initialization BEFORE runApp
+  await initDeepLinks();                      // ✅ moved here
 
   runApp(
     MultiProvider(
@@ -27,37 +33,40 @@ void main() {
       child: const MyApp(),
     ),
   );
-
-  initDeepLinks();
 }
 
+/// ------------------------------------------------------------
+/// Deep Link Handler
+/// ------------------------------------------------------------
 Future<void> initDeepLinks() async {
-  debugPrint('INIT: initDeepLinks() called');            // ✅ A
+  debugPrint('INIT: initDeepLinks() called');
   _appLinks ??= AppLinks();
 
-  // ✅ Cold start
+  // ---- COLD START ----
   try {
     final initial = await _appLinks!.getInitialLink();
-    debugPrint('INIT: getInitialLink() => $initial');    // ✅ B
+    debugPrint('INIT: getInitialLink() => $initial');
     if (initial != null) _handleUri(initial);
   } catch (e) {
     debugPrint('INIT ERROR: $e');
   }
 
-  // ✅ Warm/foreground
+  // ---- WARM / FOREGROUND ----
   _linkSub?.cancel();
   _linkSub = _appLinks!.uriLinkStream.listen((uri) {
-    debugPrint('STREAM: $uri');                          // ✅ C
+    debugPrint('STREAM: $uri');
     _handleUri(uri);
   }, onError: (err) {
     debugPrint('Deep link stream error: $err');
   });
 }
 
+/// ------------------------------------------------------------
+/// URI Resolver
+/// ------------------------------------------------------------
 void _handleUri(Uri uri) {
   debugPrint('DEEP LINK => $uri');
 
-  // drivest://ride/69  এবং drivest:///ride/69 — দুটোই সাপোর্ট
   final segments = uri.host.isEmpty
       ? uri.pathSegments
       : [uri.host, ...uri.pathSegments];
@@ -69,13 +78,13 @@ void _handleUri(Uri uri) {
 
   final first = segments[0];
 
-  // ✅ fixed: drivest://ride/69
+  // drivest://ride/69
   if (first == 'ride' && segments.length >= 2 && segments[1] == '69') {
     Get.snackbar('Deep Link', 'Ride 69 opened successfully!');
     return;
   }
 
-  // ✅ fixed: drivest://profile/nime
+  // drivest://profile/nime
   if (first == 'profile' && segments.length >= 2 && segments[1] == 'nime') {
     Get.snackbar('Deep Link', 'Welcome, Nime!');
     return;

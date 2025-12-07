@@ -6,6 +6,7 @@ import '../core/services/network/user_provider.dart';
 import '../features/auth/screen/sign_in_screen.dart';
 import '../features/auth/services/auth_service.dart';
 import '../features/onBoarding/ui/screen/splash_screen.dart';
+import '../main.dart';
 import '../main_bottom_nav_screen.dart';
 
 class MyApp extends StatefulWidget {
@@ -17,18 +18,19 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _checkLoginStatus();
-  // }
-  //
-  // Future<void> _checkLoginStatus() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final token = prefs.getString('token');
-  //   setState(() {
-  //   });
-  // }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    setState(() {
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,8 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider(create: (_) => UserProvider()),
         ],
       child: GetMaterialApp(
-        title: 'Drivest',
+          navigatorKey: navigatorKey,
+          title: 'Drivest',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: false,
@@ -97,20 +100,21 @@ class _MyAppState extends State<MyApp> {
             type: BottomNavigationBarType.fixed,
           ),
         ),
-        home: FutureBuilder<String?>(
-          future: AuthService().getToken(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const SplashScreen();
-            }
-            final token = snapshot.data;
-
-            if (token != null && token.isNotEmpty) {
-              return const MainBottomNavScreen();
-            }
-            return const SignInScreen();
-          },
-        ),
+        home: SplashScreen()
+        // FutureBuilder<String?>(
+        //   future: AuthService().getToken(),
+        //   builder: (context, snapshot) {
+        //     if (snapshot.connectionState == ConnectionState.waiting) {
+        //       return const SplashScreen();
+        //     }
+        //     final token = snapshot.data;
+        //
+        //     if (token != null && token.isNotEmpty) {
+        //       return const MainBottomNavScreen();
+        //     }
+        //     return const SignInScreen();
+        //   },
+        // ),
       ),
     );
   }
