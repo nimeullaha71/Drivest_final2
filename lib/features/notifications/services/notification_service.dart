@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../../../core/services/network/auth_utils.dart';
 import '../model/notification_model.dart';
 import '../../../app/urls.dart';
 
@@ -15,6 +16,12 @@ class NotificationService {
       },
     );
 
+    if (response.statusCode == 401 ||
+        response.statusCode == 402 ||
+        response.statusCode == 403) {
+      await AuthUtils.handleUnauthorized();
+      throw Exception("Unauthorized! Logging out...");
+    }
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       List data = body['data'];
@@ -45,6 +52,13 @@ class NotificationService {
       body: body,
     );
 
+    if (response.statusCode == 401 ||
+        response.statusCode == 402 ||
+        response.statusCode == 403) {
+      await AuthUtils.handleUnauthorized();
+      throw Exception("Unauthorized! Logging out...");
+    }
+
     if (response.statusCode != 200) {
       throw Exception("Failed to mark notification as read");
     }
@@ -61,6 +75,13 @@ class NotificationService {
         "Content-Type": "application/json",
       },
     );
+
+    if (response.statusCode == 401 ||
+        response.statusCode == 402 ||
+        response.statusCode == 403) {
+      await AuthUtils.handleUnauthorized();
+      throw Exception("Unauthorized! Logging out...");
+    }
 
     if (response.statusCode != 200) {
       throw Exception("Failed to mark all notifications as read");

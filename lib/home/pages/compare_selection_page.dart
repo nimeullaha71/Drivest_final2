@@ -109,24 +109,6 @@ class _CompareSelectionPageState extends State<CompareSelectionPage> {
                       right: 12,
                       child: Icon(Icons.check_circle, color: Colors.green, size: 32),
                     ),
-                  // Positioned(
-                  //   bottom: 10,
-                  //   right: 20,
-                  //   child: ElevatedButton(
-                  //     style: ElevatedButton.styleFrom(
-                  //       backgroundColor: const Color(0xffE5EEF6),
-                  //       foregroundColor: const Color(0xff015093),
-                  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  //     ),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(builder: (_) => CarDetailsScreen(carId: car.id)),
-                  //       );
-                  //     },
-                  //     child: const Text('View Details'),
-                  //   ),
-                  // ),
                 ],
               ),
             );

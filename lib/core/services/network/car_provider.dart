@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:drivest_office/app/urls.dart';
 import 'package:drivest_office/home/model/car_model.dart';
 
+import 'auth_utils.dart';
+
 class CarProvider extends ChangeNotifier {
   bool _isLoading = false;
   List<CarModel> _cars = [];
@@ -39,7 +41,7 @@ class CarProvider extends ChangeNotifier {
       final uri = Uri.parse(Urls.carsUrl)
           .replace(queryParameters: queryParams);
 
-      final res = await http.get(
+      final response = await http.get(
         uri,
         headers: {
           'Content-Type': 'application/json',
@@ -47,8 +49,15 @@ class CarProvider extends ChangeNotifier {
         },
       );
 
-      if (res.statusCode == 200) {
-        final data = json.decode(res.body);
+      if (response.statusCode == 401 ||
+          response.statusCode == 402 ||
+          response.statusCode == 403) {
+        await AuthUtils.handleUnauthorized();
+        throw Exception("Unauthorized! Logging out...");
+      }
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
 
         if (data['success'] == true && data['data'] != null) {
           final List items = data['data'];
@@ -57,7 +66,7 @@ class CarProvider extends ChangeNotifier {
           _cars = [];
         }
       } else {
-        debugPrint('Failed to load cars: ${res.statusCode}');
+        debugPrint('Failed to load cars: ${response.statusCode}');
         _cars = [];
       }
     } catch (e) {
