@@ -166,10 +166,16 @@ class _FilterPageState extends State<FilterPage> {
               setState(() => selectedLocation = val);
             }),
 
-            SizedBox(height: 24),
-            _buildBottomButton(),
-            SizedBox(height: 24),
+            // SizedBox(height: 24),
+            // _buildBottomButton(),
+            // SizedBox(height: 24),
           ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: _buildBottomButton(),
         ),
       ),
     );
