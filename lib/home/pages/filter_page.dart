@@ -10,68 +10,11 @@ class FilterPage extends StatefulWidget {
 
 class _FilterPageState extends State<FilterPage> {
   final List<String> brands = [
-    "7",
-    "A",
-    "Atco",
-    "Audi",
-    "Auto",
-    "Automaat",
-    "Autos",
-    "Autoscout",
-    "Bestelwagens",
-    "Bmw",
-    "Camionette",
-    "Citroen",
-    "Dacia",
-    "E30",
-    "E36",
-    "Elektrische",
-    "Fiat",
-    "Ford",
-    "Glansmispel",
-    "Goedkope",
-    "Honda",
-    "Honden",
-    "Hyundai",
-    "Iveco",
-    "Kapot",
-    "Kia",
-    "Leasing",
-    "Lexus",
-    "Lichte",
-    "Maserati",
-    "Mercedes",
-    "Mercedes-benz",
-    "Mercedez-benz",
-    "Metalen",
-    "Mid",
-    "Mini",
-    "Msi",
-    "Nissan",
-    "Oldtimer",
-    "Oldtimers",
-    "Opel",
-    "Paardentrailer",
-    "Paardenvrachtwagenmobilehome",
-    "Particulieren",
-    "Pennant",
-    "Peugeot",
-    "Pokemon",
-    "Polo",
-    "Porsche",
-    "Radiaalzaag",
-    "Renault",
-    "Riemst",
-    "Scania",
-    "Schone",
-    "Scooter",
-    "Seat",
-    "Toyota",
-    "Tweedehands",
-    "Volkswagen",
-    "Volvo",
-    "Vw",
-    "Wegens"
+    "7", "A", "Audi", "Auto", "Automaat", "Bmw", "Citroen", "Dacia", "Fiat", "Ford",
+    "Honda", "Hyundai", "Iveco", "Kia", "Leasing", "Lexus", "Maserati", "Mercedes",
+    "Mercedez-benz", "Mini", "Nissan", "Opel", "Paardenvrachtwagenmobilehome", "Particulieren",
+    "Peugeot", "Polo", "Porsche", "Renault", "Riemst", "Scania", "Seat", "Toyota",
+    "Tweedehands", "Volkswagen", "Volvo", "Vw",
   ];
 
   final List<String> fuelTypes = [
@@ -85,99 +28,94 @@ class _FilterPageState extends State<FilterPage> {
   ];
 
   final List<String> conditions = ['Excellent', 'Good', 'Needs Repair'];
-  final List<String> locations = ['Belgium', 'Canada', 'South Korea'];
+  final List<String> locations = ['Belgium', 'Netherlands', 'Germany'];
 
   String? selectedBrand = 'Toyota';
   String? selectedFuelType = 'Diesel';
-
   String? selectedCarType;
   String? selectedCondition;
   String? selectedLocation;
 
+  bool isButtonClicked = false;
   RangeValues priceRange = RangeValues(5, 7000000);
   RangeValues yearRange = RangeValues(2000, 2010);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60),
-        child: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(Icons.refresh, color: Colors.blue),
-            onPressed: () {},
+        backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(60),
+          child: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.white,
+            centerTitle: true,
+            leading: IconButton(
+              icon: Icon(Icons.refresh, color: Colors.blue),
+              onPressed: () {},
+            ),
+            title: Text('Filter', style: TextStyle(color: Colors.black)),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.close, color: Colors.blue),
+                onPressed: () => Navigator.pop(context),
+              )
+            ],
           ),
-          title: Text('Filter', style: TextStyle(color: Colors.black)),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.close, color: Colors.blue),
-              onPressed: () => Navigator.pop(context),
-            )
-          ],
         ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: ListView(
-          children: [
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: ListView(
+            children: [
+              _buildSectionTitle("Car Brand"),
+              _buildSingleSelectChips(brands, selectedBrand, (val) {
+                setState(() => selectedBrand = val);
+              }, isMandatory: true),
 
-            _buildSectionTitle("Car Brand"),
-            _buildSingleSelectChips(brands, selectedBrand, (val) {
-              setState(() => selectedBrand = val);
-            }, isMandatory: true),
+              _buildSectionTitle("Price Range"),
+              _buildSlider(
+                priceRange,
+                RangeValues(0, 10000000),
+                "K",
+                    (newRange) => setState(() => priceRange = newRange),
+              ),
 
-            _buildSectionTitle("Price Range"),
-            _buildSlider(
-              priceRange,
-              RangeValues(0, 10000000),
-              "K",
-                  (newRange) => setState(() => priceRange = newRange),
-            ),
+              _buildSectionTitle("Year of Manufacture"),
+              _buildSlider(
+                yearRange,
+                RangeValues(2000, 2025),
+                "",
+                    (newRange) => setState(() => yearRange = newRange),
+              ),
 
-            _buildSectionTitle("Year of Manufacture"),
-            _buildSlider(
-              yearRange,
-              RangeValues(2000, 2025),
-              "",
-                  (newRange) => setState(() => yearRange = newRange),
-            ),
+              _buildSectionTitle("Fuel Type"),
+              _buildSingleSelectChips(fuelTypes, selectedFuelType, (val) {
+                setState(() => selectedFuelType = val);
+              }),
 
-            _buildSectionTitle("Fuel Type"),
-            _buildSingleSelectChips(fuelTypes, selectedFuelType, (val) {
-              setState(() => selectedFuelType = val);
-            },),
+              _buildSectionTitle("Car Type"),
+              _buildSingleSelectChips(carTypes, selectedCarType, (val) {
+                setState(() => selectedCarType = val);
+              }),
 
-            _buildSectionTitle("Car Type"),
-            _buildSingleSelectChips(carTypes, selectedCarType, (val) {
-              setState(() => selectedCarType = val);
-            }),
+              _buildSectionTitle("Condition"),
+              _buildSingleSelectChips(conditions, selectedCondition, (val) {
+                setState(() => selectedCondition = val);
+              }),
 
-            _buildSectionTitle("Condition"),
-            _buildSingleSelectChips(conditions, selectedCondition, (val) {
-              setState(() => selectedCondition = val);
-            }),
+              _buildSectionTitle("Location"),
+              _buildSingleSelectChips(locations, selectedLocation, (val) {
+                setState(() => selectedLocation = val);
+              }),
 
-            _buildSectionTitle("Location"),
-            _buildSingleSelectChips(locations, selectedLocation, (val) {
-              setState(() => selectedLocation = val);
-            }),
-
-            // SizedBox(height: 24),
-            // _buildBottomButton(),
-            // SizedBox(height: 24),
-          ],
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: _buildBottomButton(),
-        ),
-      ),
+        bottomNavigationBar: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: _buildBottomButton(),
+            ))
     );
   }
 
@@ -277,6 +215,17 @@ class _FilterPageState extends State<FilterPage> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
+          setState(() {
+            isButtonClicked = true; // Change color on button click
+          });
+
+          // Optional: Reset the color back after a short delay (500ms)
+          Future.delayed(Duration(milliseconds: 500), () {
+            setState(() {
+              isButtonClicked = false; // Reset the color after delay
+            });
+          });
+
           final selectedFilters = {
             "brand": selectedBrand,
             "fuelType": selectedFuelType,
@@ -298,7 +247,9 @@ class _FilterPageState extends State<FilterPage> {
           );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromRGBO(1, 80, 147, 1),
+          backgroundColor: isButtonClicked
+              ? Colors.green // Green color when clicked
+              : Color.fromRGBO(1, 80, 147, 1), // Default color
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
