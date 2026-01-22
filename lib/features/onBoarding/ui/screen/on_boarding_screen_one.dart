@@ -2,6 +2,8 @@ import 'package:drivest_office/features/onBoarding/ui/screen/on_boarding_screen_
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../app/asset_paths.dart';
+import '../../../../home/pages/car_details_screen.dart';
+import '../../../../home/pages/models/car_details_model.dart';
 
 class OnBoardingScreenOne extends StatefulWidget {
   const OnBoardingScreenOne({super.key});
@@ -21,6 +23,23 @@ class OnBoardingScreenOne extends StatefulWidget {
     );
   }
 }
+final carData = CarDetailsModel(
+  title: 'Tesla Model 3',
+  description: 'Tesla model 3 is an all-electric compact sedan.',
+  imageUrl: 'https://your-image-url.com/car.png',
+  seats: 5,
+  power: '85 kW (116 hp)',
+  engineSize: '1560 cc',
+  mileage: 290000,
+  maxSpeed: 200,
+  engineOutput: 50,
+  suggestedPrice: 20000,
+  resalePrice: 22000,
+  repairCost: 20000,
+  estimatedProfit: 22000,
+  price: 25000,
+);
+
 
 class _OnBoardingScreenOneState extends State<OnBoardingScreenOne> {
   @override
@@ -93,7 +112,8 @@ class _OnBoardingScreenOneState extends State<OnBoardingScreenOne> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const OnBoardingScreenTwo(),
+                          // builder: (context) => const OnBoardingScreenTwo(),
+                          builder: (context) => CarDetailsScreen(),
                         ),
                       );
                     },

@@ -66,10 +66,10 @@ class RecommendedSection extends StatelessWidget {
                   final car = cars[index];
                   return GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) =>  CarDetailsScreen(carId: car.id,)),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (_) =>  CarDetailsScreen(carId: car.id,)),
+                      // );
                     },
                     child: Container(
                       width: 300,

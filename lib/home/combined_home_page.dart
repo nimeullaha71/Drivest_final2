@@ -241,12 +241,12 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
           ),
           child: GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CarDetailsScreen(carId: carId),
-                ),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (_) => CarDetailsScreen(carId: carId),
+              //   ),
+              // );
             },
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

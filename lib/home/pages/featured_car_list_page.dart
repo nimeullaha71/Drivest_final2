@@ -75,12 +75,12 @@ class FeaturedCarListPage extends StatelessWidget {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => CarDetailsScreen(carId: car.id),
-                              ),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (_) => CarDetailsScreen(carId: car.id),
+                            //   ),
+                            // );
                           },
                           child: const Text('view details'),
                         ),
