@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app/app_strings.dart';
 import '../home/model/car_model.dart';
 
 class SmallCarCard extends StatelessWidget {
@@ -62,7 +63,7 @@ class SmallCarCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(car.make, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                     const SizedBox(height: 4),
-                    Text('Price: \$${car.price}', style: const TextStyle(fontSize: 13)),
+                    Text('Price: ${AppStrings.currencySign} ${car.price}', style: const TextStyle(fontSize: 13)),
                     const SizedBox(height: 2),
                     Text('Year: ${car.year}, Seats: ${car.specs}', style: const TextStyle(fontSize: 12)),
                   ],

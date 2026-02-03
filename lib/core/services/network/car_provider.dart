@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:drivest_office/app/urls.dart';
 import 'package:drivest_office/home/model/car_model.dart';
 import 'auth_utils.dart';
-import 'car_service.dart'; // Ensure CarService is imported
+import 'car_service.dart';
 
 class CarProvider extends ChangeNotifier {
   bool _isLoading = false;
@@ -16,7 +16,6 @@ class CarProvider extends ChangeNotifier {
   List<CarModel> get cars => _cars;
   List<CarModel> get featuredCars => _featuredCars;
 
-  // 🔹 Fetch all cars (existing)
   Future<void> fetchCars({String? search, Map<String, dynamic>? filters}) async {
     _isLoading = true;
     notifyListeners();

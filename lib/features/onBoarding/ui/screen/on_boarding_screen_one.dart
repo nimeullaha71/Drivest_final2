@@ -112,8 +112,8 @@ class _OnBoardingScreenOneState extends State<OnBoardingScreenOne> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          // builder: (context) => const OnBoardingScreenTwo(),
-                          builder: (context) => CarDetailsScreen(),
+                          builder: (context) => const OnBoardingScreenTwo(),
+                          //builder: (context) => CarDetailsScreen(),
                         ),
                       );
                     },
