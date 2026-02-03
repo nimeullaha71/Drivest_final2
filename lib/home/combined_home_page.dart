@@ -241,12 +241,12 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
           ),
           child: GestureDetector(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (_) => CarDetailsScreen(carId: carId),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CarDetailsScreen(carId: carId),
+                ),
+              );
             },
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -260,9 +260,11 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                     imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) =>
-                        Image.asset("assets/images/car.png"),
+                        //Image.asset("assets/images/car.png"),
+                        Image.asset("assets/images/car_imgae_for_demo.jpg"),
                   )
-                      : Image.asset("assets/images/car.png"),
+                      //: Image.asset("assets/images/car.png"),
+                      : Image.asset("assets/images/car_imgae_for_demo.jpg"),
                 ),
               ),
               title: Text(

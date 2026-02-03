@@ -38,7 +38,8 @@ class CarCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset(
-                        "assets/images/car.png",
+                        //"assets/images/car.png",
+                        "assets/images/car_imgae_for_demo.jpg",
                         height: 180,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -46,7 +47,8 @@ class CarCard extends StatelessWidget {
                     },
                   )
                       : Image.asset(
-                    "assets/images/car.png",
+                    //"assets/images/car.png",
+                    "assets/images/car_imgae_for_demo.jpg",
                     height: 180,
                     width: double.infinity,
                     fit: BoxFit.cover,

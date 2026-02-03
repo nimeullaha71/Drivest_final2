@@ -84,11 +84,11 @@ class FeaturedCarSinglePage extends StatelessWidget {
                   final car = cars[index];
                   return GestureDetector(
                     onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //       builder: (context) =>  CarDetailsScreen(carId: car.id)),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>  CarDetailsScreen(carId: car.id)),
+                      );
                     },
                     child: Container(
                       width: 300,
