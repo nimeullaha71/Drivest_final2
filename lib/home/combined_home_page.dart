@@ -262,9 +262,11 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
                     errorBuilder: (_, __, ___) =>
                         //Image.asset("assets/images/car.png"),
                         Image.asset("assets/images/car_imgae_for_demo.jpg"),
+
                   )
                       //: Image.asset("assets/images/car.png"),
                       : Image.asset("assets/images/car_imgae_for_demo.jpg"),
+
                 ),
               ),
               title: Text(
