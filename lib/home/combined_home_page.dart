@@ -244,7 +244,9 @@ class _CombinedHomePageState extends State<CombinedHomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
+
                   builder: (_) => CarDetailsScreen(carId: carId),
+
                 ),
               );
             },
