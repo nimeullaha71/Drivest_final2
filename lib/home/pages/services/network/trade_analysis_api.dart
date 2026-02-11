@@ -27,4 +27,22 @@ class TradeAnalysisAPI {
     }
   }
 
+  static Future<Map<String, dynamic>> compareCars(List<Map<String, dynamic>> carsData) async {
+    final response = await http.post(
+      Uri.parse(Urls.compareUrl),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // Body is an object with "cars" key
+      body: jsonEncode({"cars": carsData}),
+    );
+
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.body);
+      return result as Map<String, dynamic>;
+    } else {
+      throw Exception("Failed to compare cars: ${response.body}");
+    }
+  }
+
 }
