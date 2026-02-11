@@ -1,6 +1,8 @@
 class Urls{
   //static const String _baseUrl = "https://admin-dashboard.drivestai.com";
   static const String _baseUrl = "https://backend.drivestai.com";
+  //static const String _aibaseUrl = "https://backend.drivestai.com";
+
   static const String signUpUrl = '${_baseUrl}/register';
   static const String signInUrl = '${_baseUrl}/login';
   static const String deActivatedUrl = '${_baseUrl}/user/deactivate';
@@ -19,6 +21,7 @@ class Urls{
   static const String notificationAllReadUrl = '${_baseUrl}/user/notifications-all-read';
   static const String carAnalyzeUrl = '${_baseUrl}/ai/analyze';
   static const String ticketUrl = '${_baseUrl}/user/create-ticket';
+  static const String aiSuggestUrl = '${_baseUrl}/ai/suggest';
   static const String showFavouriteUrl = '${_baseUrl}/user/favorites';
   static const String createStripeSessionUrl = '${_baseUrl}/subscription/create';
   static const String createWebHookUrlUrl = '${_baseUrl}/subscription/stripe/webhook';

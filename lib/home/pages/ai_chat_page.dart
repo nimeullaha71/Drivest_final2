@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:drivest_office/app/urls.dart';
 import 'package:drivest_office/home/pages/saved_page.dart';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -18,16 +19,14 @@ class _AiChatPageState extends State<AiChatPage> {
   final TextEditingController _input = TextEditingController();
 
   // === API config ===
-  final String _baseUrl = 'https://web-scrapping.drivestai.com/ai-suggest';
-  // যদি টোকেন লাগে, হেডারে বসাও:
-  // final String _apiKey = 'YOUR_API_KEY';
+  // final String _baseUrl = 'https://web-scrapping.drivestai.com/ai-suggest';
 
   // === Conversation state ===
   final _messages = <_Msg>[
     _Msg('Hi! Ask me anything about finding a car.', false),
   ];
 
-  int _stage = 0;            // API-এর stage এখানে রাখি
+  // int _stage = 0;            // API-এর stage এখানে রাখি
   bool _isSending = false;   // typing indicator
 
   @override
@@ -74,33 +73,24 @@ class _AiChatPageState extends State<AiChatPage> {
     });
 
     try {
-      final uri = Uri.parse(_baseUrl);
+      final uri = Uri.parse(Urls.aiSuggestUrl);
 
       final headers = <String, String>{
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        // সার্ভার যদি UA চায়:
-        'User-Agent': 'FlutterApp/1.0',
-        // অথ লাগলে:
-        // 'Authorization': 'Bearer YOUR_API_KEY',
       };
 
       final body = jsonEncode({
-        'stage': _stage,
-        'user_input': userText,
+        'prompt': userText,
       });
 
       final res = await _postWithRedirects(uri, headers: headers, body: body);
 
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body) as Map<String, dynamic>;
-        final reply = (data['reply'] ?? 'Sorry, I could not understand.').toString();
-        final nextStage = (data['stage'] is int)
-            ? data['stage'] as int
-            : int.tryParse('${data['stage']}') ?? _stage;
+        final reply = (data['suggestion'] ?? 'Sorry, I could not understand.').toString();
 
         setState(() {
-          _stage = nextStage;
           _messages.add(_Msg(reply, false));
         });
       } else {
