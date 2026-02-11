@@ -272,4 +272,5 @@ class _TypingBubble extends StatelessWidget {
       ),
     );
   }
+
 }
