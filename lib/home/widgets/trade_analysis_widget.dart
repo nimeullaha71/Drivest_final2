@@ -60,11 +60,8 @@ class _TradeAnalysisWidgetState extends State<TradeAnalysisWidget> {
       ),
       child: Column(
         children: [
-          _row("Suggested Price", " ${AppStrings.currencySign} ${analysis!["estimated_market_value"]}"),
-          _row("Estimated Costs", "${AppStrings.currencySign} ${analysis!["total_costs"]}"),
-          _row("Expected Profit", "${AppStrings.currencySign} ${analysis!["expected_profit"]}"),
-          _row("Profit Margin", "${analysis!["profit_margin_pct"]}%"),
-          _row("Risk Level", analysis!["risk_level"]),
+          _row("Estimated Market Value", "${AppStrings.currencySign} ${analysis!["estimated_market_value"]}"),
+          _row("Profit", "${AppStrings.currencySign} ${analysis!["profit"]}"),
           const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -73,7 +70,7 @@ class _TradeAnalysisWidgetState extends State<TradeAnalysisWidget> {
               borderRadius: BorderRadius.circular(30),
             ),
             child: Text(
-              analysis!["recommendation"],
+              analysis!["recommendation"] ?? "N/A",
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,

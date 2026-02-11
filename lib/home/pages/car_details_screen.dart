@@ -689,6 +689,8 @@ import 'package:flutter/material.dart';
 import '../../app/app_strings.dart';
 import '../../core/services/network/car_service.dart';
 import '../model/car_details_model.dart';
+import '../widgets/trade_analysis_widget.dart';
+import 'ai_chat_page.dart';
 
 class CarDetailsScreen extends StatefulWidget {
   final String carId;
@@ -834,6 +836,24 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                   ),
                 ),
 
+                /// 5️⃣ AI TRADE ANALYSIS WIDGET
+                if (showAIAnalysis)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    child: TradeAnalysisWidget(
+                      carData: {
+                        "title": car.title,
+                        "brand": car.make, // Assuming 'make' is the brand
+                        "year_numeric": int.tryParse(car.year.toString()) ?? 2020,
+                        "mileage_numeric": int.tryParse(car.mileage.toString().replaceAll(RegExp(r'[^0-9]'), '')) ?? 0,
+                        "price_numeric": int.tryParse(car.price.toString().replaceAll(RegExp(r'[^0-9]'), '')) ?? 0,
+                        "fuel_type": v(specs.fuelConsumption), // Mapping fuel
+                        "transmission": v(specs.gearbox), // Mapping transmission
+                        "url": car.image, // Main image
+                      },
+                    ),
+                  ),
+
                 const SizedBox(height: 8),
                 const Padding(
                   padding: EdgeInsets.all(16.0),
@@ -916,10 +936,15 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                       fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('AI Suggestion'),
-                ),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (_) => const AiChatPage()),
+                //     );
+                //   },
+                //   child: const Text('AI Suggestion'),
+                // ),
               ],
             ),
           );
