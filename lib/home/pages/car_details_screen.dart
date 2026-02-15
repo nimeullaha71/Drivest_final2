@@ -689,6 +689,7 @@ import 'package:flutter/material.dart';
 import '../../app/app_strings.dart';
 import '../../core/services/network/car_service.dart';
 import '../model/car_details_model.dart';
+import '../widgets/profile_page_app_bar.dart';
 import '../widgets/trade_analysis_widget.dart';
 import 'ai_chat_page.dart';
 
@@ -718,10 +719,11 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Car Details'),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Car Details'),
+      //   centerTitle: true,
+      // ),
+      appBar: const DrivestAppBar(title: "Car Details"),
       body: FutureBuilder<CarDetailsModel>(
         future: futureCar,
         builder: (context, snapshot) {

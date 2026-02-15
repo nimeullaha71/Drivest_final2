@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:drivest_office/app/app_strings.dart';
 import 'package:drivest_office/app/urls.dart';
+import 'package:drivest_office/home/pages/car_details_screen.dart';
 import 'package:drivest_office/home/widgets/profile_page_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -122,7 +123,7 @@ class _FilteredCarPageState extends State<FilteredCarPage> {
               ),
               isThreeLine: true,
               onTap: () {
-                //TODO: Navigate to car details page
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>CarDetailsScreen(carId: car['_id'])));
               },
             ),
           );
