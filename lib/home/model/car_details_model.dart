@@ -6,6 +6,7 @@ class CarDetailsModel {
   final String make;
   final String brand;
   final String model;
+  final String fuelType;
   final String trim;
   final int year;
   final String status;
@@ -36,6 +37,7 @@ class CarDetailsModel {
     required this.brand,
     required this.model,
     required this.trim,
+    required this.fuelType,
     required this.year,
     required this.status,
     required this.price,
@@ -65,6 +67,7 @@ class CarDetailsModel {
       brand: json['brand'] ?? '',
       model: json['model'] ?? '',
       trim: json['trim'] ?? '',
+      fuelType: json['fuelType'] ?? '',
       year: p(json['year']),
       status: json['status'] ?? '',
       price: p(json['price']),

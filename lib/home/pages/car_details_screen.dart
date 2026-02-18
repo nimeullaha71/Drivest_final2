@@ -818,7 +818,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                       FeatureItem(
                           icon: Icons.favorite,
                           label: 'Fuel',
-                          value: v(specs.fuelConsumption)),
+                          value: v(car.fuelType)),
                     ],
                   ),
                 ),
@@ -897,7 +897,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                 InfoTable(
                   title: 'Energy Consumption',
                   data: {
-                    'Fuel type': v(specs.fuelConsumption),
+                    'Fuel type': v(car.fuelType),
                     'Emissions': v(specs.emissions),
                   },
                 ),
