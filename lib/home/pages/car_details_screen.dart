@@ -804,9 +804,9 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                           label: 'Power',
                           value: '${v(specs.power)} HP'),
                       FeatureItem(
-                          icon: Icons.settings,
-                          label: 'Engine',
-                          value: v(specs.engineSize)),
+                          icon: Icons.door_front_door,
+                          label: 'Doors',
+                          value: v(specs.doors)),
                       FeatureItem(
                           icon: Icons.water_drop,
                           label: 'Mileage',
@@ -816,7 +816,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                           label: 'Gearbox',
                           value: v(specs.gearbox)),
                       FeatureItem(
-                          icon: Icons.favorite,
+                          icon: Icons.local_gas_station,
                           label: 'Fuel',
                           value: v(car.fuelType)),
                     ],
