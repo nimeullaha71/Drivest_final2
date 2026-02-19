@@ -26,119 +26,121 @@ class _SettingScreenState extends State<SettingScreen> {
       backgroundColor: Colors.grey[100],
       appBar: DrivestAppBar(title: "Settings"),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ListTile(
-                  tileColor: Colors.white,
-                  leading: const Icon(Icons.key, color: Color(0xff015093)),
-                  title: const Text(
-                    "Change Password",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff333333),
-                    ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 24,
-                    color: Color(0xff015093),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChangePasswordScreen(),
+                  child: ListTile(
+                    tileColor: Colors.white,
+                    leading: const Icon(Icons.key, color: Color(0xff015093)),
+                    title: const Text(
+                      "Change Password",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff333333),
                       ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 12),
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: ListTile(
-                  tileColor: Colors.white,
-                  leading: const Icon(
-                    Icons.delete_outline,
-                    color: Color(0xff015093),
-                  ),
-                  title: const Text(
-                    "Delete Account",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff333333),
                     ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 24,
+                      color: Color(0xff015093),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChangePasswordScreen(),
+                        ),
+                      );
+                    },
                   ),
-                  onTap: () {
-                    final scaffoldContext = context; // SAVE CONTEXT BEFORE DIALOG
-
-                    showDialog(
-                      context: context,
-                      builder: (dialogContext) {
-                        return AlertDialog(
-                          title: const Text("Confirm Delete Account"),
-                          content: const Text("Are you sure you want to delete your account? This action cannot be undone."),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(dialogContext),
-                              child: const Text("Cancel"),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(dialogContext); // close dialog
-
-                                final success = await AuthService().deleteAccount();
-
-                                if (success) {
-                                  // show snackbar safely
-                                  ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("User account deleted successfully"),
-                                      duration: Duration(milliseconds: 800),
-                                    ),
-                                  );
-
-                                  await Future.delayed(const Duration(milliseconds: 800));
-
-                                  if (!mounted) return;
-
-                                  Navigator.of(scaffoldContext, rootNavigator: true)
-                                      .pushAndRemoveUntil(
-                                    MaterialPageRoute(builder: (_) => const SignInScreen()),
-                                        (route) => false,
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Failed to delete account. Try again."),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: const Text(
-                                "Delete Account",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-
                 ),
-              ),
-            ],
+                const SizedBox(height: 12),
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListTile(
+                    tileColor: Colors.white,
+                    leading: const Icon(
+                      Icons.delete_outline,
+                      color: Color(0xff015093),
+                    ),
+                    title: const Text(
+                      "Delete Account",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff333333),
+                      ),
+                    ),
+                    onTap: () {
+                      final scaffoldContext = context; // SAVE CONTEXT BEFORE DIALOG
+
+                      showDialog(
+                        context: context,
+                        builder: (dialogContext) {
+                          return AlertDialog(
+                            title: const Text("Confirm Delete Account"),
+                            content: const Text("Are you sure you want to delete your account? This action cannot be undone."),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(dialogContext),
+                                child: const Text("Cancel"),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(dialogContext); // close dialog
+
+                                  final success = await AuthService().deleteAccount();
+
+                                  if (success) {
+                                    // show snackbar safely
+                                    ScaffoldMessenger.of(scaffoldContext).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("User account deleted successfully"),
+                                        duration: Duration(milliseconds: 800),
+                                      ),
+                                    );
+
+                                    await Future.delayed(const Duration(milliseconds: 800));
+
+                                    if (!mounted) return;
+
+                                    Navigator.of(scaffoldContext, rootNavigator: true)
+                                        .pushAndRemoveUntil(
+                                      MaterialPageRoute(builder: (_) => const SignInScreen()),
+                                          (route) => false,
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(scaffoldContext).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Failed to delete account. Try again."),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: const Text(
+                                  "Delete Account",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -102,86 +102,88 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: const DrivestAppBar(title: "Change Password"),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Set your new password",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                color: Color(0xff333333),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _newPasswordController,
-              obscureText: _obscureNewPassword,
-              decoration: InputDecoration(
-                hintText: "New Password",
-                hintStyle: const TextStyle(color: Color(0xffA1A1A1)),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
-                    color: const Color(0xff015093),
-                  ),
-                  onPressed: _toggleNewPasswordVisibility,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Set your new password",
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  color: Color(0xff333333),
                 ),
               ),
-            ),
-            const SizedBox(height: 15),
-            TextField(
-              controller: _retypePasswordController,
-              obscureText: _obscureRetypePassword,
-              decoration: InputDecoration(
-                hintText: "Retype Password",
-                hintStyle: const TextStyle(color: Color(0xffA1A1A1)),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureRetypePassword ? Icons.visibility_off : Icons.visibility,
-                    color: const Color(0xff015093),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _newPasswordController,
+                obscureText: _obscureNewPassword,
+                decoration: InputDecoration(
+                  hintText: "New Password",
+                  hintStyle: const TextStyle(color: Color(0xffA1A1A1)),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
                   ),
-                  onPressed: _toggleRetypePasswordVisibility,
-                ),
-              ),
-            ),
-            const SizedBox(height: 25),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF015093),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(57),
-                  ),
-                ),
-                onPressed: _changePassword,
-                child: const Text(
-                  "Change Password",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xffFEFEFE),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+                      color: const Color(0xff015093),
+                    ),
+                    onPressed: _toggleNewPasswordVisibility,
                   ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 15),
+              TextField(
+                controller: _retypePasswordController,
+                obscureText: _obscureRetypePassword,
+                decoration: InputDecoration(
+                  hintText: "Retype Password",
+                  hintStyle: const TextStyle(color: Color(0xffA1A1A1)),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureRetypePassword ? Icons.visibility_off : Icons.visibility,
+                      color: const Color(0xff015093),
+                    ),
+                    onPressed: _toggleRetypePasswordVisibility,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 25),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF015093),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(57),
+                    ),
+                  ),
+                  onPressed: _changePassword,
+                  child: const Text(
+                    "Change Password",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xffFEFEFE),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
