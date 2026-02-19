@@ -5,7 +5,7 @@ class Urls{
 
   static const String signUpUrl = '${_baseUrl}/register';
   static const String signInUrl = '${_baseUrl}/login';
-  static const String deActivatedUrl = '${_baseUrl}/user/deactivate';
+  static const String deleteAccountUrl = '${_baseUrl}/user/delete-account';
   static const String invoiceUrl = '${_baseUrl}/user/invoices';
   static const String signInWithGoogleUrl = '${_baseUrl}/google-login';
   static const String carsUrl = '${_baseUrl}/user/cars?initial=true';

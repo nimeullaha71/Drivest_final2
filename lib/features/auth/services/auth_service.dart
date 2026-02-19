@@ -68,14 +68,14 @@ class AuthService {
     return prefs.getString('token');
   }
 
-  Future<bool> deactivateUser() async {
+  Future<bool> deleteAccount() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString("token");
       if (token == null) return false;
 
-      final response = await http.put(
-        Uri.parse(Urls.deActivatedUrl),
+      final response = await http.delete(
+        Uri.parse(Urls.deleteAccountUrl),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token"
@@ -88,7 +88,7 @@ class AuthService {
       }
       return false;
     } catch (e) {
-      print("Deactivate Error: $e");
+      print("Delete Account Error: $e");
       return false;
     }
   }

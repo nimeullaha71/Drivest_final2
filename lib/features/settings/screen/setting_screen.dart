@@ -72,7 +72,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     color: Color(0xff015093),
                   ),
                   title: const Text(
-                    "Deactivated",
+                    "Delete Account",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -86,8 +86,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       context: context,
                       builder: (dialogContext) {
                         return AlertDialog(
-                          title: const Text("Confirm Deactivated"),
-                          content: const Text("Are you sure you want to deactivate your account?"),
+                          title: const Text("Confirm Delete Account"),
+                          content: const Text("Are you sure you want to delete your account? This action cannot be undone."),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(dialogContext),
@@ -97,13 +97,13 @@ class _SettingScreenState extends State<SettingScreen> {
                               onPressed: () async {
                                 Navigator.pop(dialogContext); // close dialog
 
-                                final success = await AuthService().deactivateUser();
+                                final success = await AuthService().deleteAccount();
 
                                 if (success) {
                                   // show snackbar safely
                                   ScaffoldMessenger.of(scaffoldContext).showSnackBar(
                                     const SnackBar(
-                                      content: Text("User deactivated successfully"),
+                                      content: Text("User account deleted successfully"),
                                       duration: Duration(milliseconds: 800),
                                     ),
                                   );
@@ -120,13 +120,13 @@ class _SettingScreenState extends State<SettingScreen> {
                                 } else {
                                   ScaffoldMessenger.of(scaffoldContext).showSnackBar(
                                     const SnackBar(
-                                      content: Text("Failed to deactivate account. Try again."),
+                                      content: Text("Failed to delete account. Try again."),
                                     ),
                                   );
                                 }
                               },
                               child: const Text(
-                                "Deactivated",
+                                "Delete Account",
                                 style: TextStyle(color: Colors.red),
                               ),
                             ),
