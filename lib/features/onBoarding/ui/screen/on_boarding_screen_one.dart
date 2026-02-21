@@ -70,7 +70,7 @@ class _OnBoardingScreenOneState extends State<OnBoardingScreenOne> {
                 const SizedBox(height: 20),
 
                 const Text(
-                  "Welcome to Divest",
+                  "Welcome to Drivest",
                   style: TextStyle(
                     fontSize: 32,
                     color: Colors.white,
