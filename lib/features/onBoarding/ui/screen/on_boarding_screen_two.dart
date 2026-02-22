@@ -63,7 +63,7 @@ class _OnBoardingScreenTwoState extends State<OnBoardingScreenTwo> {
                 const SizedBox(height: 8),
 
                 const Text(
-                  "Your next car is just one click away with Divest",
+                  "Your next car is just one click away with Drivest",
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white70,
